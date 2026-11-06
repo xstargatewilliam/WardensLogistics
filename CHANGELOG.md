@@ -1,5 +1,9 @@
 # Histórico de versões
 
+## 0.6.3
+- **Atalhos sempre visíveis:** uma linha discreta logo acima da versão do jogo, no canto inferior direito, com a mesma fonte; o conteúdo muda conforme a janela aberta. Substitui a barra de atalhos e o lembrete ao carregar.
+- **Raio-x:** o fundo do painel volta a ser escuro (a borda passou a ser desenhada como quatro linhas finas, sem vazar branco pelo fundo translúcido).
+
 ## 0.6.2
 - **Atalhos na interface:** barra discreta embaixo da tela, no estilo do jogo, com os atalhos que valem para a janela aberta (baú, inventário, construção). Lembrete único com as teclas principais ao carregar o mundo. Opção `ShowKeyHints`.
 - **Raio-x:** ícones próprios (drone, estação, entregas, energia, crítico, aviso), no estilo hexagonal do HUD, incluídos em `icons/`.

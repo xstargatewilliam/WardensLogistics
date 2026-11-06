@@ -43,11 +43,12 @@ namespace WardensLogistics.Core
         /// </summary>
         public static RectTransform Box(Transform parent, string name, RectOffset padding, float border = 2f, float spacing = 6f)
         {
+            // A moldura não tem fundo próprio: o fundo escuro fica só no interior e a borda são
+            // quatro linhas finas por cima. (Um retângulo branco inteiro atrás de um fundo
+            // translúcido deixava a caixa cinza-clara.)
             var frame = NewChild(name, parent);
-            frame.gameObject.AddComponent<Image>().color = BorderColor;
-            int b = Mathf.RoundToInt(border);
+            int b = Mathf.CeilToInt(border);
             var frameLayout = frame.gameObject.AddComponent<VerticalLayoutGroup>();
-            frameLayout.padding = new RectOffset(b, b, b, b);
             frameLayout.childControlWidth = frameLayout.childControlHeight = true;
             var fit = frame.gameObject.AddComponent<ContentSizeFitter>();
             fit.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
@@ -56,11 +57,30 @@ namespace WardensLogistics.Core
             var inner = NewChild("Inner", frame);
             inner.gameObject.AddComponent<Image>().color = PanelColor;
             var layout = inner.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.padding = padding;
+            layout.padding = new RectOffset(padding.left + b, padding.right + b, padding.top + b, padding.bottom + b);
             layout.spacing = spacing;
             layout.childControlWidth = layout.childControlHeight = true;
             layout.childForceExpandHeight = false;
+
+            Edge(frame, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -border), Vector2.zero);  // topo
+            Edge(frame, new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, new Vector2(0, border));   // base
+            Edge(frame, new Vector2(0, 0), new Vector2(0, 1), Vector2.zero, new Vector2(border, 0));   // esquerda
+            Edge(frame, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-border, 0), Vector2.zero);  // direita
             return inner;
+        }
+
+        private static void Edge(Transform frame, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
+        {
+            var edge = NewChild("Border", frame);
+            edge.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            edge.anchorMin = anchorMin;
+            edge.anchorMax = anchorMax;
+            edge.offsetMin = offsetMin;
+            edge.offsetMax = offsetMax;
+            var img = edge.gameObject.AddComponent<Image>();
+            img.color = BorderColor;
+            img.raycastTarget = false;
+            edge.SetAsLastSibling();
         }
 
         public static RectTransform Row(Transform parent, float spacing)

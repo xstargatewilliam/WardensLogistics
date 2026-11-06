@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.6.2";
+        public const string Version = "0.6.3";
 
         internal static ManualLogSource Log;
 
@@ -74,8 +74,8 @@ namespace WardensLogistics
                 "Escreve mensagens detalhadas no BepInEx/LogOutput.log.\nWrite detailed messages to BepInEx/LogOutput.log.");
 
             ShowKeyHints = Config.Bind("1. General", "ShowKeyHints", true,
-                "Mostrar os atalhos do mod na parte de baixo das janelas e um lembrete ao carregar o mundo.\n" +
-                "Show the mod's shortcuts at the bottom of windows and a reminder when the world loads.");
+                "Mostrar os atalhos do mod no canto inferior direito, acima da versão do jogo.\n" +
+                "Show the mod's shortcuts in the bottom-right corner, above the game version.");
 
             PullRange = Config.Bind("2. Core", "PullRange", 200f,
                 "Raio em metros dos baús usados para construir e craftar.\n" +

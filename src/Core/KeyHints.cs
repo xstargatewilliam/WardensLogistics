@@ -1,24 +1,26 @@
 using System.Collections.Generic;
-using HarmonyLib;
 using SpaceCraft;
+using TMPro;
 using UnityEngine;
 
 namespace WardensLogistics.Core
 {
     /// <summary>
-    /// Atalhos do mod na interface, de forma discreta: uma barra embaixo da tela que mostra
-    /// só os atalhos que valem para a janela aberta, com teclas desenhadas como "teclas"
-    /// (moldura branca fina, fonte do jogo). Sem janela aberta, nada aparece; ao carregar o
-    /// mundo, um lembrete único no canto lista as teclas principais.
+    /// Atalhos do mod sempre visíveis e discretos: uma linha de texto logo acima da versão
+    /// do jogo ("v2.104 ... - Modded"), no canto inferior direito, com a mesma fonte e o
+    /// mesmo alinhamento. O conteúdo acompanha o contexto:
+    /// - sem janela: as teclas principais (guardar, buscar, raio-x);
+    /// - baú aberto: depositar, mover pilha, mover tudo, onde está;
+    /// - inventário: onde está o item; construção e bancadas: ingredientes;
+    /// - outras janelas: nada.
+    /// A linha fica no mesmo retângulo do texto da versão, com uma margem inferior igual à
+    /// altura desse texto, então acompanha qualquer resolução.
     /// </summary>
     internal sealed class KeyHints : MonoBehaviour
     {
-        private static readonly Color LabelColor = new Color(1f, 1f, 1f, 0.8f);
-
-        private GameObject _canvas;
-        private RectTransform _bar;
-        private DataConfig.UiType _shownFor = DataConfig.UiType.Null;
-        private static bool _welcomed;
+        private TextMeshProUGUI _legend;
+        private TextMeshProUGUI _source;
+        private string _lastText;
 
         public static void Create()
         {
@@ -28,83 +30,96 @@ namespace WardensLogistics.Core
             go.AddComponent<KeyHints>();
         }
 
-        private void Update()
+        private void LateUpdate()
         {
-            var windows = Managers.GetManager<WindowsHandler>();
-            var ui = windows == null || !Plugin.ShowKeyHints.Value ? DataConfig.UiType.Null : windows.GetOpenedUi();
-            if (ui == _shownFor) return;
-            _shownFor = ui;
-
-            var hints = HintsFor(ui);
-            if (hints.Count == 0)
+            var hud = Managers.GetManager<BaseHudHandler>();
+            var version = hud != null ? hud.textBottomRight : null;
+            if (version == null || !Plugin.ShowKeyHints.Value)
             {
-                if (_canvas != null) _canvas.SetActive(false);
+                if (_legend != null) _legend.gameObject.SetActive(false);
                 return;
             }
-            EnsureCanvas();
-            _canvas.SetActive(true);
-            Ui.ClearChildren(_bar);
-            var row = Ui.Row(_bar, 26f);
-            row.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>().childAlignment = TextAnchor.MiddleCenter;
-            foreach (var (keys, label) in hints)
-            {
-                var hint = Ui.Row(row, 8f);
-                for (int i = 0; i < keys.Length; i++)
-                {
-                    if (i > 0) Ui.Label(hint, "+", 15f, LabelColor);
-                    Ui.KeyCap(hint, keys[i], 15f);
-                }
-                Ui.Label(hint, label, 15f, LabelColor);
-            }
+            if (_legend == null || _source != version) Attach(version);
+
+            var windows = Managers.GetManager<WindowsHandler>();
+            string text = Compose(windows == null ? DataConfig.UiType.Null : windows.GetOpenedUi());
+            bool show = !string.IsNullOrEmpty(text) && version.gameObject.activeInHierarchy;
+            _legend.gameObject.SetActive(show);
+            if (!show) return;
+
+            if (text != _lastText) { _legend.text = text; _lastText = text; }
+
+            // Logo acima do texto da versão: margem inferior = altura que o texto ocupa no retângulo.
+            float above = version.textBounds.size.y > 0f
+                ? version.textBounds.max.y - version.rectTransform.rect.yMin + 4f
+                : version.fontSize * 1.3f;
+            var m = _legend.margin;
+            if (Mathf.Abs(m.w - above) > 0.5f) _legend.margin = new Vector4(m.x, m.y, m.z, above);
         }
 
-        private static List<(string[] keys, string label)> HintsFor(DataConfig.UiType ui)
+        private void Attach(TextMeshProUGUI version)
         {
-            var list = new List<(string[], string)>();
+            _source = version;
+            if (_legend != null) Destroy(_legend.gameObject);
+
+            var go = new GameObject("WardensLogistics.KeyLegend", typeof(RectTransform));
+            go.transform.SetParent(version.transform.parent, false);
+            var rt = (RectTransform)go.transform;
+            var src = version.rectTransform;
+            rt.anchorMin = src.anchorMin;
+            rt.anchorMax = src.anchorMax;
+            rt.pivot = src.pivot;
+            rt.sizeDelta = src.sizeDelta;
+            rt.anchoredPosition = src.anchoredPosition;
+
+            _legend = go.AddComponent<TextMeshProUGUI>();
+            _legend.font = version.font;
+            _legend.fontSharedMaterial = version.fontSharedMaterial;
+            _legend.fontSize = version.fontSize * 0.85f;
+            _legend.fontStyle = version.fontStyle;
+            _legend.alignment = TextAlignmentOptions.BottomRight;
+            _legend.color = new Color(1f, 1f, 1f, 0.72f);
+            _legend.enableWordWrapping = false;
+            _legend.overflowMode = TextOverflowModes.Overflow;
+            _legend.raycastTarget = false;
+            _legend.richText = true;
+            _lastText = null;
+        }
+
+        private static string Compose(DataConfig.UiType ui)
+        {
+            var parts = new List<string>();
+            string store = Plugin.QuickStoreEnabled.Value ? Plugin.QuickStoreKey.Value.ToString() : null;
             string find = Plugin.FinderEnabled.Value ? Plugin.FinderKey.Value.ToString() : null;
+            string xray = Plugin.XRayEnabled.Value ? Plugin.XRayKey.Value.ToString() : null;
+
             switch (ui)
             {
+                case DataConfig.UiType.Null:
+                    if (store != null) parts.Add(Key(store, "legend.store"));
+                    if (find != null) parts.Add(Key(find, "legend.find"));
+                    if (xray != null) parts.Add(Key(xray, "legend.xray"));
+                    break;
                 case DataConfig.UiType.Container:
-                    if (Plugin.QuickStoreEnabled.Value && Plugin.DepositOpenEnabled.Value)
-                        list.Add((new[] { Plugin.QuickStoreKey.Value.ToString() }, Text.Get("hint.deposit")));
+                    if (store != null && Plugin.DepositOpenEnabled.Value) parts.Add(Key(store, "legend.deposit"));
                     if (Pilhas.Stacks.Enabled)
                     {
-                        list.Add((new[] { Text.Get("hint.click") }, Text.Get("hint.move_stack")));
-                        list.Add((new[] { "Shift", Text.Get("hint.click") }, Text.Get("hint.move_all")));
+                        parts.Add(Key(Text.Get("legend.click"), "legend.move_stack"));
+                        parts.Add(Key("Shift+" + Text.Get("legend.click"), "legend.move_all"));
                     }
-                    if (find != null) list.Add((new[] { find }, Text.Get("hint.find_item")));
+                    if (find != null) parts.Add(Key(find, "legend.where"));
                     break;
                 case DataConfig.UiType.Equipment:
-                    if (find != null) list.Add((new[] { find }, Text.Get("hint.find_item")));
+                    if (find != null) parts.Add(Key(find, "legend.where"));
                     break;
                 case DataConfig.UiType.Construction:
                 case DataConfig.UiType.Craft:
-                    if (find != null) list.Add((new[] { find }, Text.Get("hint.find_recipe")));
+                    if (find != null) parts.Add(Key(find, "legend.ingredients"));
                     break;
             }
-            return list;
+            return string.Join("   ", parts);
         }
 
-        private void EnsureCanvas()
-        {
-            if (_canvas != null) return;
-            _canvas = Ui.NewCanvas("WardensLogistics.KeyHints", 40);
-            _bar = Ui.Box(_canvas.transform, "Bar", new RectOffset(16, 16, 6, 6), 1.5f);
-            var frame = (RectTransform)_bar.parent;
-            frame.anchorMin = frame.anchorMax = frame.pivot = new Vector2(0.5f, 0f);
-            frame.anchoredPosition = new Vector2(0f, 46f);
-        }
-
-        /// <summary>Lembrete único ao carregar o mundo.</summary>
-        [HarmonyPatch(typeof(PlanetLoader), "HandleDataAfterLoad")]
-        private static class Welcome
-        {
-            private static void Postfix()
-            {
-                if (_welcomed || !Plugin.ShowKeyHints.Value) return;
-                _welcomed = true;
-                Game.Notify(Text.Get("hint.welcome", Plugin.QuickStoreKey.Value, Plugin.FinderKey.Value, Plugin.XRayKey.Value), null, 8f);
-            }
-        }
+        private static string Key(string key, string labelKey) => $"<b>{key}</b> {Text.Get(labelKey)}";
     }
 }
