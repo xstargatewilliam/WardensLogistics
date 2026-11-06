@@ -1,5 +1,8 @@
 # Histórico de versões
 
+## 0.6.1
+- **Raio-x:** painel redesenhado no estilo do HUD do jogo (caixa escura com borda branca, fonte do jogo), com indicadores por ícone (drones, estações, entregas, energia) e problemas em linhas curtas. Energia só aparece quando há estação de drones. Ícones personalizáveis por PNG na pasta `icons/`.
+
 ## 0.6.0
 - **Pilhas (novo módulo, fase 1):** itens iguais empilham até 250 por espaço (`StackSize`) na mochila e nos baús. O número da pilha aparece no canto do espaço; clicar numa pilha dentro da janela de baú move a pilha inteira (Shift continua movendo todos do tipo). Características genéticas, sequências de DNA e plantas de projeto só empilham com cópias idênticas.
 - **Correção de segurança:** ao carregar o save, o jogo cortava a lista de itens de um inventário em 8000 partes; a leitura agora não tem limite.

@@ -140,11 +140,11 @@ namespace WardensLogistics.Logistica
 
             // 1. Sem estação de drones
             if (demandsByGroup.Count > 0 && report.Stations == 0)
-                Add(report, Severity.Critical, null, Text.Get("xray.no_station"));
+                Add(report, Severity.Critical, null, Text.Get("xray.s.no_station"));
 
             // 2. Sem energia
             if (!report.Energy && (report.DronesFlying > 0 || report.TasksWaiting + report.TasksToSupply + report.TasksToDemand > 0))
-                Add(report, Severity.Critical, null, Text.Get("xray.no_energy"));
+                Add(report, Severity.Critical, null, Text.Get("xray.s.no_energy"));
 
             // 3 e 4. Pedidos sem fornecedor ou com fornecedor vazio
             foreach (var pair in demandsByGroup)
@@ -154,19 +154,19 @@ namespace WardensLogistics.Logistica
                 string name = Readable.GetGroupName(g);
                 if (!suppliersByGroup.TryGetValue(g, out var suppliers))
                 {
-                    var issue = Add(report, Severity.Critical, g.GetImage(), Text.Get("xray.no_supplier", name, pair.Value.Count));
+                    var issue = Add(report, Severity.Critical, g.GetImage(), Text.Get("xray.s.no_supplier", name));
                     foreach (var inv in pair.Value) issue.Places.Add(PositionOf(inv));
                 }
                 else if (!stockByGroup.ContainsKey(g))
                 {
-                    var issue = Add(report, Severity.Warning, g.GetImage(), Text.Get("xray.supplier_empty", name, suppliers.Count));
+                    var issue = Add(report, Severity.Warning, g.GetImage(), Text.Get("xray.s.supplier_empty", name));
                     foreach (var inv in suppliers) issue.Places.Add(PositionOf(inv));
                 }
             }
 
             // 5. Entregas esperando e nenhum drone livre
             if (report.TasksWaiting >= WaitingTasksThreshold && report.DronesInStations == 0 && report.Stations > 0)
-                Add(report, Severity.Warning, null, Text.Get("xray.need_drones", report.TasksWaiting));
+                Add(report, Severity.Warning, null, Text.Get("xray.s.need_drones", report.TasksWaiting));
 
             // 6. Baú de oferta cheio de algo que ninguém pede
             foreach (var inv in supplies)
@@ -178,7 +178,7 @@ namespace WardensLogistics.Logistica
                 if (stuck == null) continue;
                 string container = ContainerName(inv);
                 var issue = Add(report, Severity.Warning, stuck.GetImage(),
-                    Text.Get("xray.supply_full", container, Readable.GetGroupName(stuck)));
+                    Text.Get("xray.s.supply_full", Readable.GetGroupName(stuck), container));
                 issue.Places.Add(PositionOf(inv));
             }
 

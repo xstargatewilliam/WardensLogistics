@@ -1,0 +1,15 @@
+Wardens Logistics - ícones personalizados do Raio-x (tecla N)
+
+Coloque aqui arquivos PNG com estes nomes. Os que faltarem usam o ícone
+de um item do próprio jogo. Não precisa recompilar: basta reabrir o jogo.
+
+  drone.png      drones (total)
+  station.png    estações de drones
+  delivery.png   entregas esperando drone
+  energy.png     energia da logística
+  critical.png   problema crítico sem item associado
+  warning.png    aviso sem item associado
+
+Formato: PNG quadrado, 128x128, fundo transparente, desenho branco
+(o painel não recolore os ícones). Traço de contorno, sem preenchimento
+pesado, no estilo dos ícones do HUD do jogo.

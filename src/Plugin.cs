@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.6.0";
+        public const string Version = "0.6.1";
 
         internal static ManualLogSource Log;
 
@@ -134,6 +134,7 @@ namespace WardensLogistics
                 "Tecla que abre e fecha o Raio-x.\nKey that opens and closes the X-Ray.");
 
             Text.Init(Path.GetDirectoryName(Info.Location));
+            Logistica.XRayHud.SetIconFolder(Path.GetDirectoryName(Info.Location));
 
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             Busca.FinderOverlay.Create();
