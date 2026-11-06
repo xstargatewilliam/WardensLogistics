@@ -1,0 +1,19 @@
+# Saída de compilação
+bin/
+obj/
+*.pdb
+
+# DLLs do jogo e da BepInEx: não podem ser redistribuídas.
+# Cada pessoa copia as da própria instalação para refs/ (veja o README).
+refs/*.dll
+*.dll
+
+# Editores
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Caminho local do jogo (Windows)
+GamePath.props

@@ -1,0 +1,2 @@
+Copie aqui as DLLs listadas no README (seção Compilar) para usar o build.sh.
+Elas não vão para o git.
