@@ -38,6 +38,31 @@ namespace WardensLogistics.Busca
         private static List<(Group group, string name, string key)> _catalog;
 
         public static bool IsActive => _active && _window != null;
+
+        /// <summary>
+        /// Retângulo da caixa de texto do jogo em coordenadas de tela do IMGUI (origem no
+        /// canto superior esquerdo), para a lista aparecer logo abaixo dela.
+        /// </summary>
+        public static Rect? InputScreenRect()
+        {
+            if (!IsActive || _window.inputField == null) return null;
+            var rt = _window.inputField.GetComponent<RectTransform>();
+            if (rt == null) return null;
+
+            var corners = new Vector3[4];
+            rt.GetWorldCorners(corners); // 0 = inferior esquerdo, 2 = superior direito
+            var canvas = rt.GetComponentInParent<Canvas>();
+            Camera cam = null;
+            if (canvas != null)
+            {
+                canvas = canvas.rootCanvas;
+                if (canvas.renderMode != RenderMode.ScreenSpaceOverlay) cam = canvas.worldCamera;
+            }
+            Vector2 min = RectTransformUtility.WorldToScreenPoint(cam, corners[0]);
+            Vector2 max = RectTransformUtility.WorldToScreenPoint(cam, corners[2]);
+            // Tela do Unity tem origem embaixo; IMGUI tem origem em cima.
+            return new Rect(min.x, Screen.height - max.y, max.x - min.x, max.y - min.y);
+        }
         public static IReadOnlyList<Suggestion> Suggestions => Current;
 
         public static void Open()

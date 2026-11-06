@@ -1,5 +1,8 @@
 # Histórico de versões
 
+## 0.4.1
+- **Busca:** a lista de sugestões aparece logo abaixo da caixa de texto do jogo (antes cobria a caixa), em qualquer resolução.
+
 ## 0.4.0
 - **Busca:** caixa de busca. Sem janela aberta, a tecla J abre um campo para digitar o nome do item, com lista de sugestões (ignora maiúsculas e acentos) e quantidade guardada nos baús. Enter procura o primeiro, clique escolhe, Esc cancela.
 

@@ -130,7 +130,13 @@ namespace WardensLogistics.Busca
             float titleH = 26f * scale;
             int rows = Mathf.Max(1, list.Count);
             float height = pad + titleH + rows * rowH + pad;
-            var box = new Rect((Screen.width - width) / 2f, Screen.height * 0.58f, width, height);
+            // Logo abaixo da caixa de texto do jogo; se não der para ler a posição, abaixo do centro.
+            var input = SearchBox.InputScreenRect();
+            float top = input.HasValue ? input.Value.yMax + 12f * scale : Screen.height * 0.6f;
+            float centerX = input.HasValue ? input.Value.center.x : Screen.width / 2f;
+            if (top + height > Screen.height - 8f * scale) top = Screen.height - 8f * scale - height;
+            float left = Mathf.Clamp(centerX - width / 2f, 8f * scale, Screen.width - width - 8f * scale);
+            var box = new Rect(left, top, width, height);
 
             GUI.color = new Color(0f, 0f, 0f, 0.8f);
             GUI.DrawTexture(box, _background);
