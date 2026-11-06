@@ -19,13 +19,14 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.6.1";
+        public const string Version = "0.6.2";
 
         internal static ManualLogSource Log;
 
         // Geral
         internal static ConfigEntry<string> Language;
         internal static ConfigEntry<bool> DebugLog;
+        internal static ConfigEntry<bool> ShowKeyHints;
 
         // Núcleo
         internal static ConfigEntry<float> PullRange;
@@ -71,6 +72,10 @@ namespace WardensLogistics
                 "To translate, see the lang folder next to the DLL.");
             DebugLog = Config.Bind("1. General", "DebugLog", false,
                 "Escreve mensagens detalhadas no BepInEx/LogOutput.log.\nWrite detailed messages to BepInEx/LogOutput.log.");
+
+            ShowKeyHints = Config.Bind("1. General", "ShowKeyHints", true,
+                "Mostrar os atalhos do mod na parte de baixo das janelas e um lembrete ao carregar o mundo.\n" +
+                "Show the mod's shortcuts at the bottom of windows and a reminder when the world loads.");
 
             PullRange = Config.Bind("2. Core", "PullRange", 200f,
                 "Raio em metros dos baús usados para construir e craftar.\n" +
@@ -139,6 +144,7 @@ namespace WardensLogistics
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             Busca.FinderOverlay.Create();
             Logistica.XRayOverlay.Create();
+            KeyHints.Create();
             Log.LogInfo($"{Name} {Version} loaded.");
         }
 

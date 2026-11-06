@@ -1,5 +1,9 @@
 # Histórico de versões
 
+## 0.6.2
+- **Atalhos na interface:** barra discreta embaixo da tela, no estilo do jogo, com os atalhos que valem para a janela aberta (baú, inventário, construção). Lembrete único com as teclas principais ao carregar o mundo. Opção `ShowKeyHints`.
+- **Raio-x:** ícones próprios (drone, estação, entregas, energia, crítico, aviso), no estilo hexagonal do HUD, incluídos em `icons/`.
+
 ## 0.6.1
 - **Raio-x:** painel redesenhado no estilo do HUD do jogo (caixa escura com borda branca, fonte do jogo), com indicadores por ícone (drones, estações, entregas, energia) e problemas em linhas curtas. Energia só aparece quando há estação de drones. Ícones personalizáveis por PNG na pasta `icons/`.
 

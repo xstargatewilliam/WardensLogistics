@@ -1,7 +1,7 @@
 Wardens Logistics - ícones personalizados do Raio-x (tecla N)
 
-Coloque aqui arquivos PNG com estes nomes. Os que faltarem usam o ícone
-de um item do próprio jogo. Não precisa recompilar: basta reabrir o jogo.
+O mod já vem com estes ícones. Para trocar algum, substitua o PNG com o
+mesmo nome. Os que faltarem usam o ícone de um item do próprio jogo. Não precisa recompilar: basta reabrir o jogo.
 
   drone.png      drones (total)
   station.png    estações de drones
