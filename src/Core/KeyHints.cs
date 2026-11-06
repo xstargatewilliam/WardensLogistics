@@ -100,6 +100,7 @@ namespace WardensLogistics.Core
                     if (find != null) parts.Add(Key(find, "legend.find"));
                     if (xray != null) parts.Add(Key(xray, "legend.xray"));
                     if (xray != null) parts.Add(Key("Ctrl+" + xray, "legend.xray_detail"));
+                    if (Plugin.TimelapseEnabled.Value) parts.Add(Key("Ctrl+" + Plugin.TimelapseKey.Value, "legend.timelapse"));
                     break;
                 case DataConfig.UiType.Container:
                     if (store != null && Plugin.DepositOpenEnabled.Value) parts.Add(Key(store, "legend.deposit"));
@@ -109,6 +110,8 @@ namespace WardensLogistics.Core
                         parts.Add(Key("Shift+" + Text.Get("legend.click"), "legend.move_all"));
                     }
                     if (find != null) parts.Add(Key(find, "legend.where"));
+                    if (Plugin.BufferEnabled.Value) parts.Add(Key(Plugin.BufferKey.Value.ToString(), "legend.buffer"));
+                    parts.Add(Key("Ctrl+" + Plugin.CopyKey.Value + "/" + Plugin.PasteKey.Value, "legend.copy_logistics"));
                     break;
                 case DataConfig.UiType.Equipment:
                     if (find != null) parts.Add(Key(find, "legend.where"));

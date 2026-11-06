@@ -22,6 +22,14 @@ namespace WardensLogistics.Pilhas
         /// <summary>Dentro da conta da logística.</summary>
         public static bool InScope => _scope > 0;
 
+        /// <summary>Baú de pedido que a logística está atendendo agora (para o buffer).</summary>
+        public static Inventory CurrentDemand { get; private set; }
+
+        private static readonly AccessTools.FieldRef<LogisticManager, List<Inventory>> DemandList =
+            AccessTools.FieldRefAccess<LogisticManager, List<Inventory>>("_demandInventories");
+        private static readonly AccessTools.FieldRef<LogisticManager, List<Inventory>> SupplyList =
+            AccessTools.FieldRefAccess<LogisticManager, List<Inventory>>("_supplyInventories");
+
         /// <summary>Item que um drone carrega procurando onde entregar (ou null).</summary>
         public static string DroneItemKey => _droneItemKey;
 
@@ -31,7 +39,9 @@ namespace WardensLogistics.Pilhas
         {
             private static void Postfix(Inventory __instance, int ____inventorySize, ref int __result)
             {
-                if (_scope <= 0 || !Stacks.CanStack(__instance)) return;
+                if (_scope <= 0) return;
+                CurrentDemand = __instance; // o jogo pede o tamanho do baú de pedido antes de procurar fornecedores
+                if (!Stacks.CanStack(__instance)) return;
                 var entity = __instance.GetLogisticEntity();
                 var groups = entity != null ? entity.GetDemandGroups() : null;
                 int capacity = __instance.GetInsideWorldObjects().Count + Stacks.FreeItems(__instance, ____inventorySize, groups);
@@ -45,6 +55,18 @@ namespace WardensLogistics.Pilhas
             private static MethodBase TargetMethod() =>
                 AccessTools.EnumeratorMoveNext(AccessTools.Method(typeof(LogisticManager), "SetLogisticTasks"));
 
+            private static void Prefix()
+            {
+                _scope++;
+                var manager = Managers.GetManager<LogisticManager>();
+                if (manager != null) Armazem.Buffer.Sync(DemandList(manager), SupplyList(manager));
+            }
+            private static void Finalizer() { if (_scope > 0) _scope--; CurrentDemand = null; }
+        }
+
+        [HarmonyPatch(typeof(LogisticManager), nameof(LogisticManager.SetInventoryStatusInLogistics))]
+        private static class StatusPatch
+        {
             private static void Prefix() => _scope++;
             private static void Finalizer() { if (_scope > 0) _scope--; }
         }

@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.8.0";
+        public const string Version = "0.9.0";
 
         internal static ManualLogSource Log;
 
@@ -56,6 +56,17 @@ namespace WardensLogistics
         internal static ConfigEntry<bool> StackEnabled;
         internal static ConfigEntry<int> StackSize;
         internal static ConfigEntry<int> StackFontSize;
+        internal static ConfigEntry<bool> AutoNameEnabled;
+        internal static ConfigEntry<bool> TimelapseEnabled;
+        internal static ConfigEntry<Key> TimelapseKey;
+        internal static ConfigEntry<float> TimelapseMinutes;
+        internal static ConfigEntry<int> TimelapseWidth;
+        internal static ConfigEntry<int> TimelapseHeight;
+        internal static ConfigEntry<bool> XRayRoutes;
+        internal static ConfigEntry<bool> BufferEnabled;
+        internal static ConfigEntry<Key> BufferKey;
+        internal static ConfigEntry<Key> CopyKey;
+        internal static ConfigEntry<Key> PasteKey;
         internal static ConfigEntry<bool> StackMachines;
         internal static ConfigEntry<bool> StackOptimizer;
         internal static ConfigEntry<bool> StackRockets;
@@ -110,6 +121,19 @@ namespace WardensLogistics
                 "Com a janela de um baú aberta, a mesma tecla deposita nele só os itens que combinam (mesmas regras acima).\n" +
                 "With a container window open, the same key deposits only matching items into it (same rules as above).");
 
+            AutoNameEnabled = Config.Bind("8. Container Tools", "AutoName", true,
+                "Ao fechar um baú sem nome que só tem um tipo de item, ele recebe o nome desse item.\n" +
+                "When closing an unnamed container that holds a single item type, it is named after that item.");
+            BufferEnabled = Config.Bind("8. Container Tools", "Buffer", true,
+                "Baús com [Buffer] no nome pedem e oferecem os mesmos itens (estoque intermediário para os drones).\n" +
+                "Containers with [Buffer] in their name both demand and supply the same items (an intermediate stock for drones).");
+            BufferKey = Config.Bind("8. Container Tools", "BufferKey", Key.B,
+                "Com um baú aberto: liga ou desliga o modo buffer.\nWith a container open: toggles buffer mode.");
+            CopyKey = Config.Bind("8. Container Tools", "CopyLogisticsKey", Key.C,
+                "Com um baú aberto, Ctrl + esta tecla copia a configuração de logística.\nWith a container open, Ctrl + this key copies the logistics settings.");
+            PasteKey = Config.Bind("8. Container Tools", "PasteLogisticsKey", Key.V,
+                "Com um baú aberto, Ctrl + esta tecla cola a configuração de logística copiada.\nWith a container open, Ctrl + this key pastes the copied logistics settings.");
+
             PullEnabled = Config.Bind("4. Pull From Containers", "Enabled", true,
                 "Construir e craftar usando ingredientes dos baús próximos. Não age no modo criativo.\n" +
                 "Build and craft using ingredients from nearby containers. Inactive in creative (free craft) mode.");
@@ -150,6 +174,19 @@ namespace WardensLogistics
             XRayKey = Config.Bind("6. Logistics X-Ray", "Key", Key.N,
                 "Tecla que abre e fecha o painel do Raio-x. Ctrl + esta tecla abre a janela detalhada.\n" +
                 "Key that opens and closes the X-Ray panel. Ctrl + this key opens the detailed window.");
+TimelapseEnabled = Config.Bind("9. Timelapse", "Enabled", true,
+                "Fotografar a evolução do planeta de um ponto fixo, a cada intervalo de jogo.\n" +
+                "Photograph the planet's evolution from a fixed spot at every game-time interval.");
+            TimelapseKey = Config.Bind("9. Timelapse", "SetSpotKey", Key.T,
+                "Ctrl + esta tecla grava o ponto de vista atual como câmera do timelapse.\n" +
+                "Ctrl + this key saves the current point of view as the timelapse camera.");
+            TimelapseMinutes = Config.Bind("9. Timelapse", "IntervalMinutes", 5f,
+                "Minutos de jogo entre uma foto e outra.\nGame minutes between photos.");
+            TimelapseWidth = Config.Bind("9. Timelapse", "Width", 1920, "Largura da foto.\nPhoto width.");
+            TimelapseHeight = Config.Bind("9. Timelapse", "Height", 1080, "Altura da foto.\nPhoto height.");
+                        XRayRoutes = Config.Bind("6. Logistics X-Ray", "ShowDroneRoutes", true,
+                "Com o Raio-x ligado, desenhar as rotas das entregas (azul: indo buscar, verde: levando, cinza: esperando drone).\n" +
+                "With the X-Ray on, draw delivery routes (blue: going to pick up, green: carrying, gray: waiting for a drone).");
 
             Text.Init(Path.GetDirectoryName(Info.Location));
             Logistica.XRayHud.SetIconFolder(Path.GetDirectoryName(Info.Location));
@@ -158,6 +195,7 @@ namespace WardensLogistics
             Busca.FinderOverlay.Create();
             Logistica.XRayOverlay.Create();
             KeyHints.Create();
+            Timelapse.Timelapse.Create();
             Log.LogInfo($"{Name} {Version} loaded.");
         }
 

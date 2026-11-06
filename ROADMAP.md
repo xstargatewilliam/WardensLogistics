@@ -13,7 +13,7 @@ aplicada à sua base.
 
 Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 
-## Estado (0.8.0)
+## Estado (0.9.0)
 
 | Módulo | Situação |
 |---|---|
@@ -24,8 +24,10 @@ Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 | Pilhas fase 1: mochila e baús | ✅ testado (inclui salvar/carregar) |
 | Atalhos no canto · Raio-x detalhado (Ctrl+N) | 🧪 a testar |
 | Pilhas fases 2 a 4: máquinas, drones, foguetes | 🧪 a testar |
+| Etiquetar automático · buffer · copiar logística | 🧪 a testar |
+| Rotas dos drones · produção por minuto · assistente de terraformação · timelapse | 🧪 a testar |
 
-## Rodadas até a 1.0
+## Rodadas até a 1.0 (A a F implementadas na 0.9.0)
 
 | Rodada | Conteúdo |
 |---|---|
@@ -35,7 +37,7 @@ Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 | D | Raio-x: rotas dos drones · produção por minuto de cada item |
 | E | Assistente de terraformação (aba do Ctrl+N antes da aba de drones) |
 | F | Timelapse da terraformação |
-| G | Progressão (desbloqueio das funções ao longo do jogo) |
+| G | Progressão (desbloqueio das funções ao longo do jogo) — aguardando confirmação |
 | — | Beta pública no Nexus quando A e B estiverem testadas |
 | 1.0 | Teste em multiplayer e em base grande, compatibilidade com mods populares, licença definida |
 

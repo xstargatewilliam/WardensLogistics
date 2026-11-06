@@ -48,8 +48,13 @@ namespace WardensLogistics
             {
                 if (findPressed && windows.GetOpenedUi() != DataConfig.UiType.TextInput && windows.GetOpenedUi() != DataConfig.UiType.Chat)
                     ItemFinder.FindHovered(windows.GetOpenedUi());
-                if (storePressed && Plugin.DepositOpenEnabled.Value && windows.GetOpenedUi() == DataConfig.UiType.Container)
-                    DepositIntoOpenContainer(windows);
+                if (windows.GetOpenedUi() == DataConfig.UiType.Container)
+                {
+                    if (storePressed && Plugin.DepositOpenEnabled.Value) DepositIntoOpenContainer(windows);
+                    if (ctrl && Pressed(keyboard, Plugin.CopyKey.Value)) ContainerTools.Copy();
+                    else if (ctrl && Pressed(keyboard, Plugin.PasteKey.Value)) ContainerTools.Paste();
+                    else if (!ctrl && Plugin.BufferEnabled.Value && Pressed(keyboard, Plugin.BufferKey.Value)) ContainerTools.ToggleBuffer();
+                }
                 return;
             }
 
@@ -63,6 +68,9 @@ namespace WardensLogistics
 
             if (xrayPressed && !ctrl)
                 Logistica.XRayOverlay.Toggle();
+
+            if (ctrl && Plugin.TimelapseEnabled.Value && Pressed(keyboard, Plugin.TimelapseKey.Value))
+                Timelapse.Timelapse.SetSpotHere();
 
             if (Pressed(keyboard, Plugin.PullToggleKey.Value))
                 PullFromContainers.Toggle();

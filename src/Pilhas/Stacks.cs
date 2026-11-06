@@ -41,6 +41,8 @@ namespace WardensLogistics.Pilhas
         };
         private static readonly HashSet<int> RocketInventories = new HashSet<int>();
 
+        public static bool IsRocketOrBackpack(int inventoryId) => RocketInventories.Contains(inventoryId) || inventoryId == BackpackId();
+
         public static void RegisterRocket(Inventory inventory)
         {
             if (inventory != null) RocketInventories.Add(inventory.GetId());

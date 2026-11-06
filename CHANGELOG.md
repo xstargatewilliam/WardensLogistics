@@ -1,5 +1,15 @@
 # Histórico de versões
 
+## 0.9.0
+- **Central Warden (Ctrl+N):** a janela detalhada ganhou abas, na ordem em que o jogo libera cada assunto: Terraformação, Produção e Drones (o Raio-x de antes).
+- **Assistente de terraformação (aba nova):** para oxigênio, calor, pressão, biomassa, plantas, insetos, animais e índice de terraformação mostra valor, ritmo por segundo, próximo desbloqueio (item ou etapa), em quanto tempo chega no ritmo atual e a melhor construção já liberada para acelerar. No topo, uma sugestão: o desbloqueio mais próximo e o que construir, ou a medida que está parada. Funciona também como convidado.
+- **Produção por minuto (aba nova):** itens criados pelas máquinas por minuto e por hora (média dos últimos 5 minutos), com o estoque nos baús.
+- **Rotas dos drones:** com o Raio-x (N) ligado, cada entrega aparece como uma linha com seta, do fornecedor ao baú que pede: azul indo buscar, verde levando, cinza esperando drone. Opção `ShowDroneRoutes`.
+- **Etiquetar automaticamente:** ao fechar um baú sem nome que tem um só tipo de item, ele recebe o nome desse item. Opção `AutoName`.
+- **Baú buffer (B no baú):** marca o baú com "[Buffer]"; ele pede os itens configurados e também os oferece a quem pede. Buffer não abastece buffer. Use prioridade baixa no buffer.
+- **Copiar e colar logística (Ctrl+C / Ctrl+V no baú):** copia pedidos, ofertas e prioridade de um baú para outro.
+- **Timelapse (Ctrl+T):** grava o ponto de vista atual; a cada 5 minutos de jogo uma câmera invisível fotografa esse ponto e salva um PNG em `Timelapse\<save>\<planeta>\` na pasta do jogo.
+
 ## 0.8.0
 - **Pilhas fase 2 (máquinas):** extratores, geradores, colmeias e fazendas, autocrafters, conversores, desintegrador (entrada e saída), lixeira e otimizador passam a empilhar. O desintegrador confere o espaço livre da saída por pilhas. Não empilham: cultivadores (o espaço é da semente), colheitas que aparecem no mundo (cada fruto é um objeto físico), estações de drones e equipamento. Opções `StackMachines` e `StackOptimizer` (o otimizador conta cada fusível, então pilhas multiplicam o efeito).
 - **Pilhas fase 3 (drones):** baús de pedido continuam recebendo entregas depois de passar do número de espaços; a conta de "quantas entregas cabem" considera as pilhas e os itens pedidos. Drone que precisa redirecionar um item procura baús com pilha aberta desse item antes de descartá-lo.

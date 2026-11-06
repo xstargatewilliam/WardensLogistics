@@ -18,7 +18,12 @@ Os Wardens foram uma civilização avançada. Este mod traz essa tecnologia para
 | **Busca** | Onde está meu item: com uma janela aberta, J sobre um item marca os baús que o têm. No menu de construção, J sobre a receita procura os ingredientes que faltam. | J |
 | **Busca** | Caixa de busca: sem janela aberta, J abre um campo para digitar o nome do item. | J |
 | **Pilhas** | Itens iguais empilham até 250 por espaço na mochila, nos baús, nas máquinas e nos foguetes de troca; drones respeitam as pilhas. Número da pilha no canto; clicar move a pilha inteira. | automático |
-| **Raio-x da logística** | Painel com o estado dos drones e das entregas, que aponta a causa dos gargalos (sem estação, sem energia, pedido sem fornecedor, fornecedor vazio, baú de oferta encalhado) e marca os baús envolvidos. Ctrl+N abre a janela detalhada, com explicação e solução de cada problema e uma tabela por item. Solo ou anfitrião. | N / Ctrl+N |
+| **Armazém** | Etiquetar automaticamente: baú sem nome com um só tipo de item recebe o nome do item ao fechar. | automático |
+| **Armazém** | Baú buffer: pede e oferece os mesmos itens (estoque intermediário para os drones). | B no baú |
+| **Armazém** | Copiar e colar a configuração de logística entre baús. | Ctrl+C / Ctrl+V no baú |
+| **Raio-x da logística** | Painel com o estado dos drones e das entregas, que aponta a causa dos gargalos (sem estação, sem energia, pedido sem fornecedor, fornecedor vazio, baú de oferta encalhado) e marca os baús envolvidos. Rotas das entregas desenhadas no mundo. Solo ou anfitrião. | N |
+| **Central Warden** | Janela com abas: Terraformação (valores, ritmo, próximo desbloqueio, tempo estimado, o que construir), Produção (itens por minuto das máquinas) e Drones (problemas com explicação e solução, tabela por item). | Ctrl+N |
+| **Timelapse** | Grava um ponto de vista e fotografa a evolução do planeta a cada 5 min de jogo, em `Timelapse\` na pasta do jogo. Para virar vídeo: `ffmpeg -framerate 24 -pattern_type glob -i "*.png" timelapse.mp4` (ou qualquer editor). | Ctrl+T |
 
 Diferenças em relação aos mods que inspiraram o projeto:
 - usa as transferências oficiais do jogo, que sincronizam em multiplayer;

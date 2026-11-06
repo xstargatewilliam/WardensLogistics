@@ -15,10 +15,10 @@ namespace WardensLogistics.Logistica
     /// cursor aparece), e ela fecha junto quando o jogo fecha as janelas (Esc ou outra
     /// janela abrindo).
     ///
-    /// Conteúdo, com rolagem pela roda do mouse:
-    /// 1. Visão geral: drones, estações, entregas e energia, cada um com uma explicação.
-    /// 2. Problemas: o que acontece, por quê, como resolver e quais baús (nome e distância).
-    /// 3. Itens na logística: por item, quantos baús pedem e oferecem, estoque, em entrega e situação.
+    /// Abas, na ordem em que o jogo libera cada assunto:
+    /// - Terraformação: medidas do planeta, próximo desbloqueio, tempo estimado e sugestão.
+    /// - Produção: itens criados pelas máquinas por minuto.
+    /// - Drones (Raio-x): visão geral, problemas com "por quê" e "como resolver", itens na logística.
     /// </summary>
     internal static class XRayWindow
     {
@@ -38,6 +38,10 @@ namespace WardensLogistics.Logistica
         private static bool _open;
         private static bool _unlockedCursor;
         private static float _nextRefresh;
+        private static int _tab;
+        private static readonly List<TextMeshProUGUI> TabLabels = new List<TextMeshProUGUI>();
+        private static readonly List<Image> TabFrames = new List<Image>();
+        private static readonly string[] TabKeys = { "w.tab.terraform", "w.tab.production", "w.tab.drones" };
 
         public static bool IsOpen => _open;
 
@@ -110,9 +114,27 @@ namespace WardensLogistics.Logistica
 
             // Cabeçalho
             var header = Ui.Row(inner, 20f);
-            var title = Ui.Label(header, Text.Get("xray.title").ToUpperInvariant(), 28f, Color.white, 2f);
+            var title = Ui.Label(header, Text.Get("w.title").ToUpperInvariant(), 28f, Color.white, 2f);
             title.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
             Ui.Label(header, Text.Get("xray.w.close", Plugin.XRayKey.Value), 15f, Muted);
+
+            // Abas
+            var tabs = Ui.Row(inner, 10f);
+            TabLabels.Clear();
+            TabFrames.Clear();
+            for (int i = 0; i < TabKeys.Length; i++)
+            {
+                int index = i;
+                var box = Ui.Box(tabs, "Tab", new RectOffset(18, 18, 6, 6), 1.5f, 0f);
+                var img = box.GetComponent<Image>();
+                img.raycastTarget = true;
+                var label = Ui.Label(box, Text.Get(TabKeys[i]).ToUpperInvariant(), 16f, Color.white, 1.5f);
+                var button = box.gameObject.AddComponent<Button>();
+                button.targetGraphic = img;
+                button.onClick.AddListener(() => SelectTab(index));
+                TabLabels.Add(label);
+                TabFrames.Add(img);
+            }
 
             // Área com rolagem
             var scrollGo = Ui.NewChild("Scroll", inner);
@@ -142,10 +164,42 @@ namespace WardensLogistics.Logistica
             _canvas.SetActive(false);
         }
 
+        private static void SelectTab(int index)
+        {
+            if (index == _tab) return;
+            _tab = index;
+            Rebuild(keepScroll: false);
+        }
+
+        private static void PaintTabs()
+        {
+            for (int i = 0; i < TabLabels.Count; i++)
+            {
+                bool on = i == _tab;
+                TabLabels[i].color = on ? Color.black : new Color(1f, 1f, 1f, 0.75f);
+                TabFrames[i].color = on ? new Color(1f, 1f, 1f, 0.92f) : new Color(1f, 1f, 1f, 0.04f);
+            }
+        }
+
         private static void Rebuild(bool keepScroll)
         {
             _nextRefresh = Time.unscaledTime + RefreshSeconds;
             float scrollPos = keepScroll && _scroll != null ? _scroll.verticalNormalizedPosition : 1f;
+            PaintTabs();
+
+            if (_tab != 2)
+            {
+                Ui.ClearChildren(_content);
+                try
+                {
+                    if (_tab == 0) TerraformTab();
+                    else ProductionTab();
+                }
+                catch (System.Exception ex) { Plugin.Log.LogWarning($"[Window] Tab {_tab} failed: {ex}"); }
+                Canvas.ForceUpdateCanvases();
+                _scroll.verticalNormalizedPosition = scrollPos;
+                return;
+            }
 
             XRay.Report r;
             try { r = XRay.Analyze(); }
@@ -168,6 +222,130 @@ namespace WardensLogistics.Logistica
 
             Canvas.ForceUpdateCanvases();
             _scroll.verticalNormalizedPosition = scrollPos;
+        }
+
+        // ---------- aba Terraformação ----------
+
+        private static void TerraformTab()
+        {
+            var r = Terraformacao.Terraform.Analyze();
+            if (!r.Available) { Paragraph(_content, Text.Get("tf.loading"), 16f, Muted); return; }
+
+            // Sugestão
+            Section(Text.Get("tf.suggestion"));
+            if (r.Stalled != null)
+                Paragraph(_content, Text.Get("tf.stalled", r.Stalled.Name, Builder(r.Stalled)), 17f, Warning);
+            if (r.Soonest != null)
+            {
+                string what = What(r.Soonest);
+                Paragraph(_content, Text.Get("tf.soonest", what, Terraformacao.Terraform.Duration(r.Soonest.Eta), r.Soonest.Name), 17f, Color.white);
+                if (r.Soonest.BestBuilder != null)
+                    Paragraph(_content, Text.Get("tf.speed_up", Readable.GetGroupName(r.Soonest.BestBuilder), r.Soonest.BestBuilderRateText), 16f, Accent);
+            }
+            else if (r.Stalled == null)
+                Paragraph(_content, Text.Get("tf.nothing_next"), 16f, Ok);
+
+            // Medidas
+            Section(Text.Get("tf.units"));
+            TfRow(null, Text.Get("tf.col_unit"), Text.Get("tf.col_value"), Text.Get("tf.col_rate"), Text.Get("tf.col_next"), Text.Get("tf.col_eta"), Text.Get("tf.col_best"), true);
+            foreach (var row in r.Rows)
+            {
+                string next = row.NextValue < 0 ? "—" : $"{row.NextValueText}  ·  {What(row)}";
+                string eta = row.NextValue < 0 ? "—" : row.PerSecond <= 0 ? Text.Get("tf.stopped") : Terraformacao.Terraform.Duration(row.Eta);
+                string best = row.BestBuilder == null ? "—" : $"{Readable.GetGroupName(row.BestBuilder)} ({row.BestBuilderRateText})";
+                Sprite icon = row.NextGroups.Count > 0 ? row.NextGroups[0].GetImage() : null;
+                TfRow(icon, row.Name, row.Value, row.Rate, next, eta, best, false);
+            }
+            Paragraph(_content, Text.Get("tf.note"), 14f, Muted);
+        }
+
+        private static string What(Terraformacao.Terraform.UnitRow row)
+        {
+            if (row.NextStage != null) return row.NextStage;
+            if (row.NextGroups.Count == 0) return "—";
+            string first = Readable.GetGroupName(row.NextGroups[0]);
+            return row.NextGroups.Count == 1 ? first : Text.Get("tf.and_more", first, row.NextGroups.Count - 1);
+        }
+
+        private static string Builder(Terraformacao.Terraform.UnitRow row) =>
+            row.BestBuilder != null ? Readable.GetGroupName(row.BestBuilder) : Text.Get("tf.any_builder");
+
+        private static void TfRow(Sprite icon, string unit, string value, string rate, string next, string eta, string best, bool header)
+        {
+            var row = Ui.Row(_content, 0f);
+            float size = header ? 14f : 16f;
+            var c = header ? Muted : Color.white;
+            Cell(row, unit, 170f, size, header ? Muted : Accent, TextAlignmentOptions.Left);
+            Cell(row, value, 140f, size, c, TextAlignmentOptions.Left);
+            Cell(row, rate, 140f, size, c, TextAlignmentOptions.Left);
+            var iconCell = Ui.NewChild("IconCell", row);
+            iconCell.gameObject.AddComponent<LayoutElement>().preferredWidth = 34f;
+            if (icon != null)
+            {
+                var img = Ui.NewChild("Icon", iconCell);
+                img.sizeDelta = new Vector2(26f, 26f);
+                img.gameObject.AddComponent<Image>().sprite = icon;
+                img.GetComponent<Image>().preserveAspect = true;
+            }
+            Cell(row, next, 330f, size, c, TextAlignmentOptions.Left);
+            Cell(row, eta, 110f, size, c, TextAlignmentOptions.Left);
+            Cell(row, best, 220f, size, header ? Muted : new Color(1f, 1f, 1f, 0.8f), TextAlignmentOptions.Left);
+        }
+
+        // ---------- aba Produção ----------
+
+        private static void ProductionTab()
+        {
+            Section(Text.Get("prod.title"));
+            var net = Unity.Netcode.NetworkManager.Singleton;
+            if (net != null && net.IsListening && !net.IsServer)
+            {
+                Paragraph(_content, Text.Get("prod.host_only"), 16f, Muted);
+                return;
+            }
+            float measured = Production.MeasuredSeconds;
+            Paragraph(_content, Text.Get("prod.explain", Terraformacao.Terraform.Duration(measured), (int)(Production.WindowSeconds / 60)), 15f, Muted);
+            var rates = Production.Rates();
+            if (rates.Count == 0) { Paragraph(_content, Text.Get("prod.none"), 16f, Muted); return; }
+
+            var stock = new Dictionary<Group, int>();
+            foreach (var e in ContainerIndex.All())
+                foreach (var wo in e.Inventory.GetInsideWorldObjects())
+                {
+                    var g = wo?.GetGroup();
+                    if (g == null) continue;
+                    stock.TryGetValue(g, out int n);
+                    stock[g] = n + 1;
+                }
+
+            ProdRow(null, Text.Get("xray.w.col_item"), Text.Get("prod.col_rate"), Text.Get("prod.col_hour"), Text.Get("xray.w.col_stock"), Muted, true);
+            int shown = 0;
+            foreach (var rate in rates)
+            {
+                if (shown++ >= 60) break;
+                stock.TryGetValue(rate.Group, out int n);
+                ProdRow(rate.Group.GetImage(), Readable.GetGroupName(rate.Group), rate.PerMinute.ToString(rate.PerMinute < 10 ? "0.0" : "0"),
+                    (rate.PerMinute * 60f).ToString("0"), n.ToString(), Color.white, false);
+            }
+        }
+
+        private static void ProdRow(Sprite icon, string name, string perMinute, string perHour, string stock, Color color, bool header)
+        {
+            var row = Ui.Row(_content, 0f);
+            float size = header ? 14f : 16f;
+            var iconCell = Ui.NewChild("IconCell", row);
+            iconCell.gameObject.AddComponent<LayoutElement>().preferredWidth = 40f;
+            if (icon != null)
+            {
+                var img = Ui.NewChild("Icon", iconCell);
+                img.sizeDelta = new Vector2(28f, 28f);
+                img.gameObject.AddComponent<Image>().sprite = icon;
+                img.GetComponent<Image>().preserveAspect = true;
+            }
+            Cell(row, name, 400f, size, header ? Muted : color, TextAlignmentOptions.Left);
+            Cell(row, perMinute, 160f, size, header ? Muted : Ok, TextAlignmentOptions.Center);
+            Cell(row, perHour, 160f, size, header ? Muted : Color.white, TextAlignmentOptions.Center);
+            Cell(row, stock, 160f, size, header ? Muted : Color.white, TextAlignmentOptions.Center);
         }
 
         private static void Section(string title)
