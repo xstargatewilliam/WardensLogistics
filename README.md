@@ -31,6 +31,17 @@ Diferenças em relação aos mods que inspiraram o projeto:
 - uma configuração só, sem atalhos em conflito;
 - textos em vários idiomas.
 
+## Progressão
+
+Por padrão as funções liberam conforme o jogo avança (opção `Progression`, em `1. General`; `false` libera tudo):
+
+| Quando | Libera |
+|---|---|
+| Início | Guardar (K), buscar (J), assistente de terraformação, timelapse |
+| Primeiro baú construído | Construir puxando dos baús |
+| Etapas de terraformação | Pilhas crescem: 10% → 40% → 100% do `StackSize` (25 → 100 → 250) |
+| Estação de drones liberada | Raio-x, rotas, produção, baú buffer, copiar logística |
+
 ## Instalação
 
 1. Instale a [BepInEx 5](https://github.com/BepInEx/BepInEx/releases) (versão `win_x64`) na pasta do jogo.

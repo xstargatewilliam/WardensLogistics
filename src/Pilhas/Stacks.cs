@@ -51,7 +51,7 @@ namespace WardensLogistics.Pilhas
         private static int _backpackFrame = -1;
 
         public static bool Enabled => Plugin.StackEnabled.Value && StackSize > 1;
-        public static int StackSize => Mathf.Clamp(Plugin.StackSize.Value, 1, 100000);
+        public static int StackSize => Core.Progress.StackSize(Mathf.Clamp(Plugin.StackSize.Value, 1, 100000));
 
         /// <summary>Marca um inventário como empilhável (baús são registrados ao surgir no mundo).</summary>
         public static void Register(Inventory inventory)

@@ -32,7 +32,7 @@ namespace WardensLogistics.Armazem
         private static int _countsFrame = -1;
         private static readonly Dictionary<Group, int> Counts = new Dictionary<Group, int>();
 
-        private static bool Active => Plugin.PullEnabled.Value && _guard == 0 && !Game.FreeCraft;
+        private static bool Active => Plugin.PullEnabled.Value && _guard == 0 && !Game.FreeCraft && Progress.Unlocked(Progress.Feature.Pull);
 
         public static void Toggle()
         {

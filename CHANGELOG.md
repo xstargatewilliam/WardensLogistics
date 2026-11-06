@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## 0.10.0
+- **Progressão (nova, ligada por padrão):** a tecnologia Warden é redescoberta ao longo do jogo.
+  - Desde o início: guardar (K), buscar (J), assistente de terraformação, timelapse.
+  - Primeiro baú construído: construir puxando dos baús.
+  - Pilhas crescem com as etapas de terraformação: 10% → 40% → 100% do `StackSize` (25 → 100 → 250 no padrão). Nunca diminuem; um save que já tinha pilhas grandes mantém o tamanho cheio.
+  - Estação de drones liberada: Raio-x (N), rotas, abas Produção e Drones, baú buffer, copiar logística.
+  - Aviso na tela quando algo é liberado; apertar uma tecla ainda bloqueada diz quando ela libera. Opção `Progression = false` libera tudo.
+
 ## 0.9.0
 - **Central Warden (Ctrl+N):** a janela detalhada ganhou abas, na ordem em que o jogo libera cada assunto: Terraformação, Produção e Drones (o Raio-x de antes).
 - **Assistente de terraformação (aba nova):** para oxigênio, calor, pressão, biomassa, plantas, insetos, animais e índice de terraformação mostra valor, ritmo por segundo, próximo desbloqueio (item ou etapa), em quanto tempo chega no ritmo atual e a melhor construção já liberada para acelerar. No topo, uma sugestão: o desbloqueio mais próximo e o que construir, ou a medida que está parada. Funciona também como convidado.

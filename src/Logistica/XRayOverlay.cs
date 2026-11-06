@@ -53,6 +53,7 @@ namespace WardensLogistics.Logistica
         private void Update()
         {
             XRayWindow.Tick();
+            if (_visible && !Progress.Unlocked(Progress.Feature.Logistics)) Toggle();
             bool shouldShow = _visible && !Game.IsUiOpen;
             if (!shouldShow)
             {

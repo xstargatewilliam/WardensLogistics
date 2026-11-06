@@ -33,6 +33,8 @@ namespace WardensLogistics
             bool xrayPressed = Plugin.XRayEnabled.Value && Pressed(keyboard, Plugin.XRayKey.Value);
 
             // Janela detalhada do Raio-x: Ctrl+N abre e fecha (Esc também fecha, pelo jogo).
+            bool logistics = Progress.Unlocked(Progress.Feature.Logistics);
+
             if (Logistica.XRayWindow.IsOpen)
             {
                 if (xrayPressed) Logistica.XRayWindow.Close();
@@ -51,9 +53,13 @@ namespace WardensLogistics
                 if (windows.GetOpenedUi() == DataConfig.UiType.Container)
                 {
                     if (storePressed && Plugin.DepositOpenEnabled.Value) DepositIntoOpenContainer(windows);
-                    if (ctrl && Pressed(keyboard, Plugin.CopyKey.Value)) ContainerTools.Copy();
-                    else if (ctrl && Pressed(keyboard, Plugin.PasteKey.Value)) ContainerTools.Paste();
-                    else if (!ctrl && Plugin.BufferEnabled.Value && Pressed(keyboard, Plugin.BufferKey.Value)) ContainerTools.ToggleBuffer();
+                    bool copy = ctrl && Pressed(keyboard, Plugin.CopyKey.Value);
+                    bool paste = ctrl && Pressed(keyboard, Plugin.PasteKey.Value);
+                    bool buffer = !ctrl && Plugin.BufferEnabled.Value && Pressed(keyboard, Plugin.BufferKey.Value);
+                    if ((copy || paste || buffer) && !logistics) Progress.NotifyLocked(Progress.Feature.Logistics);
+                    else if (copy) ContainerTools.Copy();
+                    else if (paste) ContainerTools.Paste();
+                    else if (buffer) ContainerTools.ToggleBuffer();
                 }
                 return;
             }
@@ -67,7 +73,10 @@ namespace WardensLogistics
                 ItemFinder.KeyWithoutWindow();
 
             if (xrayPressed && !ctrl)
-                Logistica.XRayOverlay.Toggle();
+            {
+                if (logistics) Logistica.XRayOverlay.Toggle();
+                else Progress.NotifyLocked(Progress.Feature.Logistics);
+            }
 
             if (ctrl && Plugin.TimelapseEnabled.Value && Pressed(keyboard, Plugin.TimelapseKey.Value))
                 Timelapse.Timelapse.SetSpotHere();

@@ -176,7 +176,8 @@ namespace WardensLogistics.Logistica
             for (int i = 0; i < TabLabels.Count; i++)
             {
                 bool on = i == _tab;
-                TabLabels[i].color = on ? Color.black : new Color(1f, 1f, 1f, 0.75f);
+                bool locked = i != 0 && !Progress.Unlocked(Progress.Feature.Logistics);
+                TabLabels[i].color = on ? Color.black : new Color(1f, 1f, 1f, locked ? 0.35f : 0.75f);
                 TabFrames[i].color = on ? new Color(1f, 1f, 1f, 0.92f) : new Color(1f, 1f, 1f, 0.04f);
             }
         }
@@ -186,6 +187,16 @@ namespace WardensLogistics.Logistica
             _nextRefresh = Time.unscaledTime + RefreshSeconds;
             float scrollPos = keepScroll && _scroll != null ? _scroll.verticalNormalizedPosition : 1f;
             PaintTabs();
+
+            if (_tab != 0 && !Progress.Unlocked(Progress.Feature.Logistics))
+            {
+                Ui.ClearChildren(_content);
+                Section(Text.Get(TabKeys[_tab]));
+                Paragraph(_content, Text.Get("prog.tab_locked", Progress.WhenText(Progress.Feature.Logistics)), 17f, Muted);
+                Canvas.ForceUpdateCanvases();
+                _scroll.verticalNormalizedPosition = 1f;
+                return;
+            }
 
             if (_tab != 2)
             {

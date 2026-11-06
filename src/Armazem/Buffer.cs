@@ -20,7 +20,7 @@ namespace WardensLogistics.Armazem
         private static int _unionFrame = -1;
         private static float _lastSync;
 
-        public static bool Enabled => Plugin.BufferEnabled.Value;
+        public static bool Enabled => Plugin.BufferEnabled.Value && Core.Progress.Unlocked(Core.Progress.Feature.Logistics);
 
         public static bool HasTag(string name) =>
             !string.IsNullOrEmpty(name) && name.IndexOf(ContainerTools.BufferTag, System.StringComparison.OrdinalIgnoreCase) >= 0;

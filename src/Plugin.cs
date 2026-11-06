@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.9.0";
+        public const string Version = "0.10.0";
 
         internal static ManualLogSource Log;
 
@@ -57,6 +57,7 @@ namespace WardensLogistics
         internal static ConfigEntry<int> StackSize;
         internal static ConfigEntry<int> StackFontSize;
         internal static ConfigEntry<bool> AutoNameEnabled;
+        internal static ConfigEntry<bool> ProgressionEnabled;
         internal static ConfigEntry<bool> TimelapseEnabled;
         internal static ConfigEntry<Key> TimelapseKey;
         internal static ConfigEntry<float> TimelapseMinutes;
@@ -90,6 +91,13 @@ namespace WardensLogistics
             ShowKeyHints = Config.Bind("1. General", "ShowKeyHints", true,
                 "Mostrar os atalhos do mod no canto inferior direito, acima da versão do jogo.\n" +
                 "Show the mod's shortcuts in the bottom-right corner, above the game version.");
+            ProgressionEnabled = Config.Bind("1. General", "Progression", true,
+                "Liberar as funções aos poucos, conforme o jogo avança: construir puxando dos baús após o primeiro baú; " +
+                "pilhas crescendo com a terraformação (10% → 40% → 100% do StackSize); Raio-x, rotas, produção, buffer e copiar logística " +
+                "quando a estação de drones é liberada. false = tudo liberado desde o início.\n" +
+                "Unlock features as the game progresses: build from containers after your first container; stacks growing with " +
+                "terraformation (10% → 40% → 100% of StackSize); X-Ray, routes, production, buffer and copy logistics once the drone " +
+                "station is unlocked. false = everything available from the start.");
 
             PullRange = Config.Bind("2. Core", "PullRange", 200f,
                 "Raio em metros dos baús usados para construir e craftar.\n" +
@@ -196,6 +204,7 @@ TimelapseEnabled = Config.Bind("9. Timelapse", "Enabled", true,
             Logistica.XRayOverlay.Create();
             KeyHints.Create();
             Timelapse.Timelapse.Create();
+            Core.Progress.Create();
             Log.LogInfo($"{Name} {Version} loaded.");
         }
 

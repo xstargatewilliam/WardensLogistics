@@ -13,7 +13,7 @@ aplicada à sua base.
 
 Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 
-## Estado (0.9.0)
+## Estado (0.10.0)
 
 | Módulo | Situação |
 |---|---|
@@ -27,7 +27,7 @@ Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 | Etiquetar automático · buffer · copiar logística | 🧪 a testar |
 | Rotas dos drones · produção por minuto · assistente de terraformação · timelapse | 🧪 a testar |
 
-## Rodadas até a 1.0 (A a F implementadas na 0.9.0)
+## Rodadas até a 1.0 (A a G implementadas; falta testar)
 
 | Rodada | Conteúdo |
 |---|---|
@@ -37,7 +37,7 @@ Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 | D | Raio-x: rotas dos drones · produção por minuto de cada item |
 | E | Assistente de terraformação (aba do Ctrl+N antes da aba de drones) |
 | F | Timelapse da terraformação |
-| G | Progressão (desbloqueio das funções ao longo do jogo) — aguardando confirmação |
+| G | Progressão (desbloqueio das funções ao longo do jogo) — implementada na 0.10.0 |
 | — | Beta pública no Nexus quando A e B estiverem testadas |
 | 1.0 | Teste em multiplayer e em base grande, compatibilidade com mods populares, licença definida |
 
@@ -45,7 +45,7 @@ Pendente para a 1.0: licença (MIT sugerida), teste em multiplayer (todos com o 
 teste de desempenho em base grande, compatibilidade (Containers Plus, Storage Display,
 Auto-Logistics, Storage Buffer), compilação pelo Visual Studio no Windows.
 
-## Proposta de progressão (rodada G, a confirmar)
+## Progressão (rodada G, confirmada)
 
 As funções são tecnologia Warden "redescoberta" aos poucos. Uma opção na configuração
 desliga a progressão e libera tudo desde o início.

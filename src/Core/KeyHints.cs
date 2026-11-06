@@ -92,13 +92,14 @@ namespace WardensLogistics.Core
             string store = Plugin.QuickStoreEnabled.Value ? Plugin.QuickStoreKey.Value.ToString() : null;
             string find = Plugin.FinderEnabled.Value ? Plugin.FinderKey.Value.ToString() : null;
             string xray = Plugin.XRayEnabled.Value ? Plugin.XRayKey.Value.ToString() : null;
+            bool logistics = Progress.Unlocked(Progress.Feature.Logistics);
 
             switch (ui)
             {
                 case DataConfig.UiType.Null:
                     if (store != null) parts.Add(Key(store, "legend.store"));
                     if (find != null) parts.Add(Key(find, "legend.find"));
-                    if (xray != null) parts.Add(Key(xray, "legend.xray"));
+                    if (xray != null && logistics) parts.Add(Key(xray, "legend.xray"));
                     if (xray != null) parts.Add(Key("Ctrl+" + xray, "legend.xray_detail"));
                     if (Plugin.TimelapseEnabled.Value) parts.Add(Key("Ctrl+" + Plugin.TimelapseKey.Value, "legend.timelapse"));
                     break;
@@ -110,8 +111,8 @@ namespace WardensLogistics.Core
                         parts.Add(Key("Shift+" + Text.Get("legend.click"), "legend.move_all"));
                     }
                     if (find != null) parts.Add(Key(find, "legend.where"));
-                    if (Plugin.BufferEnabled.Value) parts.Add(Key(Plugin.BufferKey.Value.ToString(), "legend.buffer"));
-                    parts.Add(Key("Ctrl+" + Plugin.CopyKey.Value + "/" + Plugin.PasteKey.Value, "legend.copy_logistics"));
+                    if (logistics && Plugin.BufferEnabled.Value) parts.Add(Key(Plugin.BufferKey.Value.ToString(), "legend.buffer"));
+                    if (logistics) parts.Add(Key("Ctrl+" + Plugin.CopyKey.Value + "/" + Plugin.PasteKey.Value, "legend.copy_logistics"));
                     break;
                 case DataConfig.UiType.Equipment:
                     if (find != null) parts.Add(Key(find, "legend.where"));
