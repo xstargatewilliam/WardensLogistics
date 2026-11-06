@@ -114,7 +114,7 @@ The Planet Crafter é um jogo da Miju Games. Este é um projeto de fã, sem vín
 
 ## Licença
 
-A definir.
+MIT. Veja [LICENSE](LICENSE).
 
 ---
 

@@ -39,9 +39,9 @@ Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 | F | Timelapse da terraformação |
 | G | Progressão (desbloqueio das funções ao longo do jogo) — implementada na 0.10.0 |
 | — | Beta pública no Nexus quando A e B estiverem testadas |
-| 1.0 | Teste em multiplayer e em base grande, compatibilidade com mods populares, licença definida |
+| 1.0 | Teste em multiplayer e em base grande, compatibilidade com mods populares |
 
-Pendente para a 1.0: licença (MIT sugerida), teste em multiplayer (todos com o mod),
+Pendente para a 1.0: teste em multiplayer (todos com o mod),
 teste de desempenho em base grande, compatibilidade (Containers Plus, Storage Display,
 Auto-Logistics, Storage Buffer), compilação pelo Visual Studio no Windows.
 
