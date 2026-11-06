@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.7.0";
+        public const string Version = "0.8.0";
 
         internal static ManualLogSource Log;
 
@@ -56,6 +56,9 @@ namespace WardensLogistics
         internal static ConfigEntry<bool> StackEnabled;
         internal static ConfigEntry<int> StackSize;
         internal static ConfigEntry<int> StackFontSize;
+        internal static ConfigEntry<bool> StackMachines;
+        internal static ConfigEntry<bool> StackOptimizer;
+        internal static ConfigEntry<bool> StackRockets;
 
         // Raio-x da logística
         internal static ConfigEntry<bool> XRayEnabled;
@@ -125,12 +128,21 @@ namespace WardensLogistics
                 "Máximo de baús marcados (os mais próximos primeiro).\nMaximum containers marked (nearest first).");
 
             StackEnabled = Config.Bind("7. Stacking", "Enabled", true,
-                "Empilhar itens iguais num mesmo espaço do inventário. Fase 1: mochila e baús.\n" +
-                "Stack identical items in one inventory slot. Phase 1: backpack and containers.");
+                "Empilhar itens iguais num mesmo espaço do inventário (mochila, baús e máquinas).\n" +
+                "Stack identical items in one inventory slot (backpack, containers and machines).");
             StackSize = Config.Bind("7. Stacking", "StackSize", 250,
                 "Quantos itens iguais cabem em um espaço.\nHow many identical items fit in one slot.");
             StackFontSize = Config.Bind("7. Stacking", "FontSize", 22,
                 "Tamanho do número da pilha no inventário.\nSize of the stack number in the inventory.");
+            StackMachines = Config.Bind("7. Stacking", "StackMachines", true,
+                "Empilhar também nas máquinas: extratores, geradores, colmeias, fazendas, autocrafters, conversores, desintegrador e lixeira.\n" +
+                "Also stack in machines: extractors, generators, hives, farms, auto-crafters, converters, disintegrator and trash bin.");
+            StackOptimizer = Config.Bind("7. Stacking", "StackOptimizer", true,
+                "Empilhar no otimizador. Cada fusível conta, então pilhas multiplicam o efeito dele.\n" +
+                "Stack in the optimizer. Every fuse counts, so stacks multiply its effect.");
+            StackRockets = Config.Bind("7. Stacking", "StackRockets", true,
+                "Empilhar nos foguetes de troca e de troca interplanetária (mais itens por viagem).\n" +
+                "Stack in trade and interplanetary exchange rockets (more items per trip).");
 
             XRayEnabled = Config.Bind("6. Logistics X-Ray", "Enabled", true,
                 "Painel com o estado da logística de drones e os problemas encontrados (solo ou anfitrião).\n" +

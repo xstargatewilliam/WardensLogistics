@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 0.8.0
+- **Pilhas fase 2 (máquinas):** extratores, geradores, colmeias e fazendas, autocrafters, conversores, desintegrador (entrada e saída), lixeira e otimizador passam a empilhar. O desintegrador confere o espaço livre da saída por pilhas. Não empilham: cultivadores (o espaço é da semente), colheitas que aparecem no mundo (cada fruto é um objeto físico), estações de drones e equipamento. Opções `StackMachines` e `StackOptimizer` (o otimizador conta cada fusível, então pilhas multiplicam o efeito).
+- **Pilhas fase 3 (drones):** baús de pedido continuam recebendo entregas depois de passar do número de espaços; a conta de "quantas entregas cabem" considera as pilhas e os itens pedidos. Drone que precisa redirecionar um item procura baús com pilha aberta desse item antes de descartá-lo.
+- **Pilhas fase 4 (foguetes):** foguetes de troca e de troca interplanetária empilham; o carrinho de compra aceita itens enquanto couberem nas pilhas, e o contador mostra os espaços ocupados. Depósitos interplanetários e baús de veículos já empilham como baús. Opção `StackRockets`.
+
 ## 0.7.0
 - **Raio-x detalhado (Ctrl+N):** janela que se comporta como as do jogo (para o personagem, mostra o cursor, fecha com Esc), com visão geral explicada (drones, estações, entregas, energia), todos os problemas com "por quê", "como resolver" e os baús envolvidos (nome e distância), e uma tabela por item (pedem, oferecem, estoque, em entrega, situação). Rolagem pela roda do mouse; atualiza a cada 3 segundos.
 

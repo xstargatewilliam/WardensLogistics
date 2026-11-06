@@ -37,9 +37,9 @@ namespace WardensLogistics.Pilhas
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.IsFull))]
         private static class IsFullPatch
         {
-            private static bool Prefix(ref bool __result, List<WorldObject> ____worldObjectsInInventory, int ____inventorySize, int ____inventoryId)
+            private static bool Prefix(Inventory __instance, ref bool __result, List<WorldObject> ____worldObjectsInInventory, int ____inventorySize, int ____inventoryId)
             {
-                string incoming = _hasIncoming ? _incomingKey : null;
+                string incoming = _hasIncoming ? _incomingKey : LogisticsPatches.DroneItemKey;
                 _hasIncoming = false;
                 if (!Stacks.CanStack(____inventoryId)) return true; // regra original do jogo
 
@@ -49,9 +49,20 @@ namespace WardensLogistics.Pilhas
 
                 // Com um item específico: cheio se ele abriria uma pilha além dos espaços.
                 // Sem item: cheio se não há espaço para uma pilha nova.
-                __result = incoming != null
-                    ? Stacks.SlotsUsedCached(____inventoryId, ____worldObjectsInInventory, incoming) > ____inventorySize
-                    : Stacks.SlotsUsedCached(____inventoryId, ____worldObjectsInInventory) >= ____inventorySize;
+                if (incoming != null)
+                {
+                    __result = Stacks.SlotsUsedCached(____inventoryId, ____worldObjectsInInventory, incoming) > ____inventorySize;
+                    return false;
+                }
+                bool noFreeSlot = Stacks.SlotsUsedCached(____inventoryId, ____worldObjectsInInventory) >= ____inventorySize;
+                // Na logística, um baú de pedido sem espaço livre ainda não está cheio se a
+                // pilha de algum item pedido tem espaço.
+                if (noFreeSlot && LogisticsPatches.InScope)
+                {
+                    var entity = __instance.GetLogisticEntity();
+                    if (entity != null && Stacks.MaxPartialRoom(____inventoryId, entity.GetDemandGroups()) > 0) noFreeSlot = false;
+                }
+                __result = noFreeSlot;
                 return false;
             }
         }
@@ -109,14 +120,83 @@ namespace WardensLogistics.Pilhas
             }
         }
 
-        /// <summary>Registra baús como empilháveis assim que o jogo liga o inventário ao objeto.</summary>
+        /// <summary>Registra baús e máquinas assim que o jogo liga o inventário ao objeto (em todos os jogadores).</summary>
         [HarmonyPatch(typeof(InventoryAssociated), nameof(InventoryAssociated.SetInventory))]
         private static class RegisterContainerPatch
         {
             private static void Postfix(InventoryAssociated __instance, Inventory inventory)
             {
                 if (inventory == null || __instance == null) return;
-                if (Core.ContainerIndex.IsStorage(__instance)) Stacks.Register(inventory);
+                if (Core.ContainerIndex.IsStorage(__instance)) { Stacks.Register(inventory); return; }
+                var woa = __instance.GetComponentInParent<WorldObjectAssociated>();
+                Stacks.TryRegisterMachine(woa != null ? woa.gameObject : __instance.gameObject, inventory);
+            }
+        }
+
+        /// <summary>
+        /// O desintegrador tem um segundo inventário (a saída) e os foguetes de troca ligam o
+        /// inventário por outro componente.
+        /// Registramos a saída quando o jogo a entrega, inclusive para os outros jogadores
+        /// (para a tela mostrar as pilhas).
+        /// </summary>
+        [HarmonyPatch(typeof(InventoryAssociatedProxy), nameof(InventoryAssociatedProxy.GetInventory))]
+        private static class ProxyInventoryPatch
+        {
+            private static void Prefix(InventoryAssociatedProxy __instance, ref Action<Inventory, WorldObject> callback)
+            {
+                if (__instance == null) return;
+                Action<Inventory> register = null;
+                var machine = __instance.GetComponentInParent<MachineDisintegrator>();
+                if (machine != null && machine.secondInventoryAssociatedProxy == __instance) register = Stacks.RegisterMachine;
+                else if (__instance.GetComponent<MachineRocketBackAndForth>() != null) register = Stacks.RegisterRocket;
+                if (register == null) return;
+                var original = callback;
+                callback = (inv, wo) =>
+                {
+                    register(inv);
+                    original?.Invoke(inv, wo);
+                };
+            }
+        }
+
+        /// <summary>
+        /// O desintegrador confere o espaço livre da saída contando itens (tamanho − itens).
+        /// Com pilhas, o espaço livre é tamanho − pilhas ocupadas. Mesma lógica do jogo, com
+        /// essa conta trocada; conservadora (supõe que cada ingrediente abre uma pilha nova).
+        /// </summary>
+        [HarmonyPatch(typeof(MachineDisintegrator), "TryToDesintegrateAnObjectInInventory")]
+        private static class DisintegratorCapacityPatch
+        {
+            private static bool Prefix(MachineDisintegrator __instance, Inventory ____firstIventory, Inventory ____secondInventory)
+            {
+                if (____firstIventory == null || ____secondInventory == null) return true;
+                int giveXIngredientsBack = __instance.giveXIngredientsBack;
+                Stacks.RegisterMachine(____secondInventory);
+                if (!Stacks.CanStack(____secondInventory)) return true;
+                if (____secondInventory.IsFull()) return false;
+
+                var output = ____secondInventory.GetInsideWorldObjects();
+                int free = ____secondInventory.GetSize() - Stacks.SlotsUsed(output);
+                var input = ____firstIventory.GetInsideWorldObjects();
+                for (int i = 0; i < input.Count; i++)
+                {
+                    var wo = input[i];
+                    var recipe = wo?.GetGroup()?.GetRecipe();
+                    if (recipe == null) continue;
+                    var ingredients = recipe.GetIngredientsGroupInRecipe();
+                    if (ingredients.Count <= 0 || free < Mathf.Min(giveXIngredientsBack, ingredients.Count)) continue;
+
+                    var pool = new List<Group>(ingredients);
+                    InventoriesHandler.Instance.RemoveItemFromInventory(wo, ____firstIventory, true);
+                    for (int j = 0; j < giveXIngredientsBack && pool.Count > 0; j++)
+                    {
+                        int index = UnityEngine.Random.Range(0, pool.Count);
+                        InventoriesHandler.Instance.AddItemToInventory(pool[index], ____secondInventory);
+                        pool.RemoveAt(index);
+                    }
+                    break;
+                }
+                return false;
             }
         }
     }

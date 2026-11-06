@@ -13,7 +13,7 @@ aplicada à sua base.
 
 Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 
-## Estado (0.7.0)
+## Estado (0.8.0)
 
 | Módulo | Situação |
 |---|---|
@@ -23,6 +23,7 @@ Página no Nexus: https://www.nexusmods.com/planetcrafter/mods/269
 | Raio-x: painel (N) | ✅ testado |
 | Pilhas fase 1: mochila e baús | ✅ testado (inclui salvar/carregar) |
 | Atalhos no canto · Raio-x detalhado (Ctrl+N) | 🧪 a testar |
+| Pilhas fases 2 a 4: máquinas, drones, foguetes | 🧪 a testar |
 
 ## Rodadas até a 1.0
 

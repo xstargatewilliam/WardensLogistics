@@ -17,7 +17,7 @@ Os Wardens foram uma civilização avançada. Este mod traz essa tecnologia para
 | **Armazém** | Construir e craftar puxando ingredientes dos baús próximos. | automático |
 | **Busca** | Onde está meu item: com uma janela aberta, J sobre um item marca os baús que o têm. No menu de construção, J sobre a receita procura os ingredientes que faltam. | J |
 | **Busca** | Caixa de busca: sem janela aberta, J abre um campo para digitar o nome do item. | J |
-| **Pilhas** | Itens iguais empilham até 250 por espaço na mochila e nos baús (fase 1), com o número da pilha no canto; clicar move a pilha inteira. | automático |
+| **Pilhas** | Itens iguais empilham até 250 por espaço na mochila, nos baús, nas máquinas e nos foguetes de troca; drones respeitam as pilhas. Número da pilha no canto; clicar move a pilha inteira. | automático |
 | **Raio-x da logística** | Painel com o estado dos drones e das entregas, que aponta a causa dos gargalos (sem estação, sem energia, pedido sem fornecedor, fornecedor vazio, baú de oferta encalhado) e marca os baús envolvidos. Ctrl+N abre a janela detalhada, com explicação e solução de cada problema e uma tabela por item. Solo ou anfitrião. | N / Ctrl+N |
 
 Diferenças em relação aos mods que inspiraram o projeto:

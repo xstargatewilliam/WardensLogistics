@@ -15,12 +15,36 @@ namespace WardensLogistics.Pilhas
     /// Espaços ocupados = soma, para cada tipo de item, de ceil(quantidade / tamanho da pilha).
     /// Um item cabe se a pilha do tipo dele ainda tem espaço ou se sobra um espaço livre.
     ///
-    /// Fase 1: empilham a mochila do jogador e os baús (inventários abertos como baú que
-    /// não são máquinas). Máquinas, drones e inventários especiais entram nas próximas fases.
+    /// Empilham: a mochila do jogador, os baús (fase 1) e as máquinas que só guardam o
+    /// que produzem ou consomem (fase 2). Não empilham: equipamento, sequenciador de DNA,
+    /// cultivadores (o espaço é da semente), colheitas que aparecem no mundo (cada item é
+    /// uma planta física), estações de drones (mais drones por estação seria trapaça).
+    /// Foguetes de troca e de troca interplanetária empilham (fase 4).
     /// </summary>
     internal static class Stacks
     {
         private static readonly HashSet<int> StackableInventories = new HashSet<int>();
+        private static readonly HashSet<int> MachineInventories = new HashSet<int>();
+        private static readonly HashSet<int> OptimizerInventories = new HashSet<int>();
+
+        /// <summary>Máquinas cujo inventário pode empilhar.</summary>
+        private static readonly System.Type[] StackableMachines =
+        {
+            typeof(MachineGenerator), typeof(MachineAutoCrafter), typeof(MachineConvertRecipe),
+            typeof(MachineDisintegrator), typeof(MachineDestructInventoryIfFull),
+        };
+
+        /// <summary>Componentes que tornam o inventário especial: nunca empilha.</summary>
+        private static readonly System.Type[] NeverStack =
+        {
+            typeof(MachineGrowerBase), typeof(MachineDroneStation),
+        };
+        private static readonly HashSet<int> RocketInventories = new HashSet<int>();
+
+        public static void RegisterRocket(Inventory inventory)
+        {
+            if (inventory != null) RocketInventories.Add(inventory.GetId());
+        }
         private static int _backpackId = -1;
         private static int _backpackFrame = -1;
 
@@ -33,10 +57,46 @@ namespace WardensLogistics.Pilhas
             if (inventory != null) StackableInventories.Add(inventory.GetId());
         }
 
+        public static void RegisterMachine(Inventory inventory)
+        {
+            if (inventory != null) MachineInventories.Add(inventory.GetId());
+        }
+
+        /// <summary>
+        /// Classifica o inventário de uma máquina pelo objeto dono. Devolve true se ele foi
+        /// registrado (máquina ou otimizador).
+        /// </summary>
+        public static bool TryRegisterMachine(GameObject root, Inventory inventory)
+        {
+            if (root == null || inventory == null) return false;
+            foreach (var t in NeverStack)
+                if (root.GetComponentInChildren(t, true) != null) return false;
+            if (root.GetComponentInChildren<MachineRocketBackAndForth>(true) != null)
+            {
+                RocketInventories.Add(inventory.GetId());
+                return true;
+            }
+            if (root.GetComponentInChildren<MachineOptimizer>(true) != null)
+            {
+                OptimizerInventories.Add(inventory.GetId());
+                return true;
+            }
+            foreach (var t in StackableMachines)
+                if (root.GetComponentInChildren(t, true) != null)
+                {
+                    MachineInventories.Add(inventory.GetId());
+                    return true;
+                }
+            return false;
+        }
+
         public static bool CanStack(int inventoryId)
         {
             if (!Enabled) return false;
             if (StackableInventories.Contains(inventoryId)) return true;
+            if (MachineInventories.Contains(inventoryId)) return Plugin.StackMachines.Value;
+            if (OptimizerInventories.Contains(inventoryId)) return Plugin.StackOptimizer.Value;
+            if (RocketInventories.Contains(inventoryId)) return Plugin.StackRockets.Value;
             return inventoryId == BackpackId();
         }
 
@@ -143,6 +203,52 @@ namespace WardensLogistics.Pilhas
             if (extraKey == null) return snap.Slots;
             snap.Counts.TryGetValue(extraKey, out int n);
             return n % StackSize == 0 ? snap.Slots + 1 : snap.Slots;
+        }
+
+        /// <summary>
+        /// Quantos itens destes tipos ainda cabem: espaços livres inteiros mais o que falta
+        /// para completar a pilha já aberta (o menor entre os tipos, para não prometer demais
+        /// quando o baú pede vários itens).
+        /// </summary>
+        public static int FreeItems(Inventory inventory, int size, IEnumerable<Group> groups)
+        {
+            var items = inventory.GetInsideWorldObjects();
+            int id = inventory.GetId();
+            int slots = SlotsUsedCached(id, items);
+            int free = System.Math.Max(0, size - slots) * StackSize;
+            return free + PartialRoom(id, groups);
+        }
+
+        /// <summary>Menor espaço restante nas pilhas abertas dos tipos dados (0 se algum não tem pilha aberta).</summary>
+        public static int PartialRoom(int inventoryId, IEnumerable<Group> groups)
+        {
+            if (groups == null || !Snapshots.TryGetValue(inventoryId, out var snap)) return 0;
+            int size = StackSize;
+            int min = int.MaxValue;
+            foreach (var g in groups)
+            {
+                if (g == null) continue;
+                snap.Counts.TryGetValue(g.GetId(), out int n);
+                int room = n % size == 0 ? 0 : size - n % size;
+                if (room < min) min = room;
+            }
+            return min == int.MaxValue ? 0 : min;
+        }
+
+        /// <summary>Maior espaço restante nas pilhas abertas dos tipos dados.</summary>
+        public static int MaxPartialRoom(int inventoryId, IEnumerable<Group> groups)
+        {
+            if (groups == null || !Snapshots.TryGetValue(inventoryId, out var snap)) return 0;
+            int size = StackSize;
+            int max = 0;
+            foreach (var g in groups)
+            {
+                if (g == null) continue;
+                snap.Counts.TryGetValue(g.GetId(), out int n);
+                int room = n % size == 0 ? 0 : size - n % size;
+                if (room > max) max = room;
+            }
+            return max;
         }
 
         private static void Count(Dictionary<string, int> counts, string key, int size, ref int slots)
