@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## 0.6.0
+- **Pilhas (novo módulo, fase 1):** itens iguais empilham até 250 por espaço (`StackSize`) na mochila e nos baús. O número da pilha aparece no canto do espaço; clicar numa pilha dentro da janela de baú move a pilha inteira (Shift continua movendo todos do tipo). Características genéticas, sequências de DNA e plantas de projeto só empilham com cópias idênticas.
+- **Correção de segurança:** ao carregar o save, o jogo cortava a lista de itens de um inventário em 8000 partes; a leitura agora não tem limite.
+- Guardar rápido e depositar passam a calcular o espaço livre por pilha.
+- Aviso quando outro mod de empilhamento está instalado.
+
 ## 0.5.1
 - **Núcleo:** dois raios. `PullRange` (padrão 200 m) para construir e craftar puxando dos baús; guardar (K) usa `StoreRangePercent` desse raio (padrão 50%, ou seja, 100 m). A opção `Range` deixou de existir.
 

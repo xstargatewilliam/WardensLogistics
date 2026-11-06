@@ -68,6 +68,7 @@ namespace WardensLogistics.Core
                     ["xray.need_drones"] = "{0} entregas esperando e nenhum drone livre",
                     ["xray.supply_full"] = "{0} cheio: oferece {1}, mas ninguém pede",
                     ["xray.container"] = "Baú",
+                    ["stack.conflict"] = "Outro mod de empilhamento instalado: {0}. Desinstale-o; dois ao mesmo tempo podem corromper inventários.",
                 },
                 ["english"] = new Dictionary<string, string>
                 {
@@ -104,6 +105,7 @@ namespace WardensLogistics.Core
                     ["xray.need_drones"] = "{0} deliveries waiting and no free drone",
                     ["xray.supply_full"] = "{0} is full: supplies {1}, but nobody demands it",
                     ["xray.container"] = "Container",
+                    ["stack.conflict"] = "Another stacking mod is installed: {0}. Uninstall it; two at once can corrupt inventories.",
                 },
             };
 

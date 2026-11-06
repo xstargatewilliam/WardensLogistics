@@ -17,6 +17,7 @@ Os Wardens foram uma civilização avançada. Este mod traz essa tecnologia para
 | **Armazém** | Construir e craftar puxando ingredientes dos baús próximos. | automático |
 | **Busca** | Onde está meu item: com uma janela aberta, J sobre um item marca os baús que o têm. No menu de construção, J sobre a receita procura os ingredientes que faltam. | J |
 | **Busca** | Caixa de busca: sem janela aberta, J abre um campo para digitar o nome do item. | J |
+| **Pilhas** | Itens iguais empilham até 250 por espaço na mochila e nos baús (fase 1), com o número da pilha no canto; clicar move a pilha inteira. | automático |
 | **Raio-x da logística** | Painel com o estado dos drones e das entregas, que aponta a causa dos gargalos (sem estação, sem energia, pedido sem fornecedor, fornecedor vazio, baú de oferta encalhado) e marca os baús envolvidos. Solo ou anfitrião. | N |
 
 Diferenças em relação aos mods que inspiraram o projeto:
@@ -41,6 +42,10 @@ Principais opções (todas com descrição em português e inglês no arquivo):
 - `IncludeWorldContainers`: usar também as caixas que vêm com o mapa (padrão: não).
 - `Key` (Quick Store / Item Finder): teclas K e J.
 - `ExcludedItemIds`: itens que nunca são guardados (ex.: `OxygenCapsule1,WaterBottle1`).
+
+## Antes de desinstalar
+
+Com as pilhas, um baú pode guardar muito mais itens do que o jogo original permite. Se você desinstalar o mod, nada é apagado na hora, mas o jogo original só mostra os primeiros itens de cada inventário e não consegue carregar mais de 8000 itens num mesmo inventário. **Esvazie as pilhas grandes antes de desinstalar.**
 
 ## Traduções
 
@@ -73,6 +78,7 @@ src/
   Armazem/           guardar rápido, depositar, puxar dos baús
   Busca/             onde está meu item, caixa de busca, marcadores
   Logistica/         raio-x da logística de drones
+  Pilhas/            empilhamento de itens
 ```
 
 ## Créditos
@@ -86,6 +92,7 @@ O código deste projeto foi escrito do zero, mas as ideias vêm de mods que a co
 - **rodikh**: Logistics Info
 - **Nicki0**: (QoL) Auto-Logistics
 - **Tjatja**: Auto Name Storage
+- **akarnokd**: CheatInventoryStacking (Apache 2.0). O empilhamento do Wardens Logistics é uma implementação própria, mas o mapa dos pontos do jogo que precisam de atenção veio do estudo desse mod.
 
 The Planet Crafter é um jogo da Miju Games. Este é um projeto de fã, sem vínculo com o estúdio.
 

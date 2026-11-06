@@ -16,8 +16,6 @@ namespace WardensLogistics.Core
         public string NameLower;
         public string DisplayName; // nome dado pelo jogador, como digitado
         public float DistanceSqr; // preenchido por Nearby()
-
-        public int FreeSlots => Inventory.GetSize() - Inventory.GetInsideWorldObjects().Count;
     }
 
     /// <summary>
@@ -124,7 +122,10 @@ namespace WardensLogistics.Core
                 var owner = all[i];
                 if (owner == null) continue;
                 if (Evaluate(owner, backpack, out var entry) == Verdict.Ok)
+                {
                     Entries.Add(entry);
+                    Pilhas.Stacks.Register(entry.Inventory);
+                }
             }
             Plugin.Debug($"[Core] Index refreshed: {Entries.Count} containers out of {all.Length} inventories.");
         }
@@ -167,6 +168,16 @@ namespace WardensLogistics.Core
                 DisplayName = name ?? "",
             };
             return Verdict.Ok;
+        }
+
+        /// <summary>Se o objeto dono deste inventário é um baú (abre como baú e não é máquina).</summary>
+        public static bool IsStorage(InventoryAssociated owner)
+        {
+            if (owner == null) return false;
+            var woa = owner.GetComponentInParent<WorldObjectAssociated>();
+            if (woa == null) woa = owner.GetComponentInChildren<WorldObjectAssociated>();
+            var root = woa != null ? woa.gameObject : owner.gameObject;
+            return OpensAsContainer(root) && MachineOn(root) == null;
         }
 
         private static bool OpensAsContainer(GameObject root)

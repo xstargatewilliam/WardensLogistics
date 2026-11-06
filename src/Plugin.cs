@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.5.1";
+        public const string Version = "0.6.0";
 
         internal static ManualLogSource Log;
 
@@ -50,6 +50,11 @@ namespace WardensLogistics
         internal static ConfigEntry<Key> FinderKey;
         internal static ConfigEntry<float> FinderSeconds;
         internal static ConfigEntry<int> FinderMaxMarkers;
+
+        // Pilhas
+        internal static ConfigEntry<bool> StackEnabled;
+        internal static ConfigEntry<int> StackSize;
+        internal static ConfigEntry<int> StackFontSize;
 
         // Raio-x da logística
         internal static ConfigEntry<bool> XRayEnabled;
@@ -113,6 +118,14 @@ namespace WardensLogistics
                 "Por quantos segundos os marcadores ficam na tela.\nHow many seconds the markers stay on screen.");
             FinderMaxMarkers = Config.Bind("5. Item Finder", "MaxMarkers", 15,
                 "Máximo de baús marcados (os mais próximos primeiro).\nMaximum containers marked (nearest first).");
+
+            StackEnabled = Config.Bind("7. Stacking", "Enabled", true,
+                "Empilhar itens iguais num mesmo espaço do inventário. Fase 1: mochila e baús.\n" +
+                "Stack identical items in one inventory slot. Phase 1: backpack and containers.");
+            StackSize = Config.Bind("7. Stacking", "StackSize", 250,
+                "Quantos itens iguais cabem em um espaço.\nHow many identical items fit in one slot.");
+            StackFontSize = Config.Bind("7. Stacking", "FontSize", 22,
+                "Tamanho do número da pilha no inventário.\nSize of the stack number in the inventory.");
 
             XRayEnabled = Config.Bind("6. Logistics X-Ray", "Enabled", true,
                 "Painel com o estado da logística de drones e os problemas encontrados (solo ou anfitrião).\n" +

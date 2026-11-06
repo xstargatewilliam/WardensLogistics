@@ -25,7 +25,7 @@ namespace WardensLogistics.Armazem
         {
             public Inventory Inventory;
             public string NameLower;
-            public int Free;
+            public Pilhas.CapacityPlanner Room; // espaço livre, contando pilhas e o que já foi enviado
             public readonly HashSet<Group> Planned = new HashSet<Group>();
         }
 
@@ -50,7 +50,7 @@ namespace WardensLogistics.Armazem
 
             var targets = new List<Target>(containers.Count);
             foreach (var c in containers)
-                targets.Add(new Target { Inventory = c.Inventory, NameLower = c.NameLower, Free = c.FreeSlots });
+                targets.Add(new Target { Inventory = c.Inventory, NameLower = c.NameLower, Room = new Pilhas.CapacityPlanner(c.Inventory) });
 
             var stored = StoreInto(targets);
             Report(stored, "store.nothing");
@@ -67,7 +67,7 @@ namespace WardensLogistics.Armazem
             {
                 Inventory = container,
                 NameLower = entry != null ? entry.NameLower : "",
-                Free = container.GetSize() - container.GetInsideWorldObjects().Count,
+                Room = new Pilhas.CapacityPlanner(container),
             };
 
             var stored = StoreInto(new List<Target> { target });
@@ -86,7 +86,7 @@ namespace WardensLogistics.Armazem
 
             // Copia da mochila: a transferência é assíncrona e o inventário só muda
             // quando o servidor responde. Por isso o espaço livre e o conteúdo novo
-            // de cada baú são contados à parte (Free / Planned).
+            // de cada baú são contados à parte (Room / Planned), já considerando as pilhas.
             foreach (var item in new List<WorldObject>(backpack.GetInsideWorldObjects()))
             {
                 var group = item?.GetGroup();
@@ -95,11 +95,11 @@ namespace WardensLogistics.Armazem
 
                 foreach (var t in targets)
                 {
-                    if (t.Free <= 0 || !Matches(t, group, itemName)) continue;
+                    if (!Matches(t, group, itemName)) continue;
                     if (!t.Inventory.GetIsAuthorized(item)) continue;
+                    if (!t.Room.TryReserve(item)) continue;
 
                     handler.TransferItem(backpack, t.Inventory, item);
-                    t.Free--;
                     t.Planned.Add(group);
                     stored.TryGetValue(group, out int n);
                     stored[group] = n + 1;
