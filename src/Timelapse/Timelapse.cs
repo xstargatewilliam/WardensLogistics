@@ -106,7 +106,16 @@ namespace WardensLogistics.Timelapse
             int ui = LayerMask.NameToLayer("UI");
             if (ui >= 0) _camera.cullingMask &= ~(1 << ui);
             _camera.targetTexture = _rt;
-            _camera.Render();
+            CopyPipelineSettings(source, _camera);
+
+            // Esconde o jogador (mãos e ferramenta) só durante a foto.
+            var hidden = new System.Collections.Generic.List<Renderer>();
+            var player = Game.Player;
+            if (player != null)
+                foreach (var r in player.GetComponentsInChildren<Renderer>())
+                    if (r.enabled) { r.enabled = false; hidden.Add(r); }
+            try { _camera.Render(); }
+            finally { foreach (var r in hidden) if (r != null) r.enabled = true; }
 
             var previous = RenderTexture.active;
             RenderTexture.active = _rt;
@@ -124,6 +133,33 @@ namespace WardensLogistics.Timelapse
             File.WriteAllBytes(file, png);
             if (_index == 1) Game.Notify(Text.Get("tl.first", _folder));
             if (Plugin.DebugLog.Value) Plugin.Log.LogInfo("[Timelapse] " + file);
+        }
+
+        private static readonly string[] PipelineProperties =
+        {
+            "renderPostProcessing", "antialiasing", "antialiasingQuality", "volumeLayerMask",
+            "renderShadows", "stopNaN", "dithering", "requiresColorOption", "requiresDepthOption",
+        };
+
+        /// <summary>
+        /// Copia da câmera do jogador as opções do pipeline gráfico (pós-processamento,
+        /// antisserrilhado, sombras), que ficam num componente à parte. Sem isso a foto sai
+        /// sem a correção de cor do jogo. Por reflexão, para não depender da DLL do pipeline.
+        /// </summary>
+        private static void CopyPipelineSettings(Camera from, Camera to)
+        {
+            Component src = null;
+            foreach (var c in from.GetComponents<Component>())
+                if (c != null && c.GetType().Name == "UniversalAdditionalCameraData") { src = c; break; }
+            if (src == null) return;
+            var type = src.GetType();
+            var dst = to.GetComponent(type) ?? to.gameObject.AddComponent(type);
+            foreach (var name in PipelineProperties)
+            {
+                var prop = type.GetProperty(name);
+                if (prop == null || !prop.CanRead || !prop.CanWrite) continue;
+                try { prop.SetValue(dst, prop.GetValue(src)); } catch { }
+            }
         }
 
         private static string TerraIndex()

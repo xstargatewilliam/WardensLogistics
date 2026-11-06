@@ -134,7 +134,10 @@ namespace WardensLogistics.Logistica
                 button.onClick.AddListener(() => SelectTab(index));
                 TabLabels.Add(label);
                 TabFrames.Add(img);
+                box.parent.gameObject.AddComponent<LayoutElement>().flexibleWidth = 0f;
             }
+            // Espaço vazio à direita: as abas ficam juntas à esquerda, no tamanho do texto.
+            Ui.NewChild("Spacer", tabs).gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
 
             // Área com rolagem
             var scrollGo = Ui.NewChild("Scroll", inner);
@@ -244,8 +247,14 @@ namespace WardensLogistics.Logistica
 
             // Sugestão
             Section(Text.Get("tf.suggestion"));
-            if (r.Stalled != null)
-                Paragraph(_content, Text.Get("tf.stalled", r.Stalled.Name, Builder(r.Stalled)), 17f, Warning);
+            if (r.Stalled.Count == 1)
+                Paragraph(_content, Text.Get("tf.stalled", r.Stalled[0].Name, Builder(r.Stalled[0])), 17f, Warning);
+            else if (r.Stalled.Count > 1)
+            {
+                var list = new List<string>();
+                foreach (var s in r.Stalled) list.Add($"<b>{Builder(s)}</b> ({s.Name.ToLowerInvariant()})");
+                Paragraph(_content, Text.Get("tf.stalled_many", string.Join(", ", list)), 17f, Warning);
+            }
             if (r.Soonest != null)
             {
                 string what = What(r.Soonest);
@@ -253,7 +262,7 @@ namespace WardensLogistics.Logistica
                 if (r.Soonest.BestBuilder != null)
                     Paragraph(_content, Text.Get("tf.speed_up", Readable.GetGroupName(r.Soonest.BestBuilder), r.Soonest.BestBuilderRateText), 16f, Accent);
             }
-            else if (r.Stalled == null)
+            else if (r.Stalled.Count == 0)
                 Paragraph(_content, Text.Get("tf.nothing_next"), 16f, Ok);
 
             // Medidas
@@ -263,7 +272,8 @@ namespace WardensLogistics.Logistica
             {
                 string next = row.NextValue < 0 ? "—" : $"{row.NextValueText}  ·  {What(row)}";
                 string eta = row.NextValue < 0 ? "—" : row.PerSecond <= 0 ? Text.Get("tf.stopped") : Terraformacao.Terraform.Duration(row.Eta);
-                string best = row.BestBuilder == null ? "—" : $"{Readable.GetGroupName(row.BestBuilder)} ({row.BestBuilderRateText})";
+                string best = row.BestBuilder != null ? $"{Readable.GetGroupName(row.BestBuilder)} ({row.BestBuilderRateText})"
+                    : row.Type == DataConfig.WorldUnitType.Terraformation ? Text.Get("tf.ti_sum") : "—";
                 Sprite icon = row.NextGroups.Count > 0 ? row.NextGroups[0].GetImage() : null;
                 TfRow(icon, row.Name, row.Value, row.Rate, next, eta, best, false);
             }
@@ -283,12 +293,12 @@ namespace WardensLogistics.Logistica
 
         private static void TfRow(Sprite icon, string unit, string value, string rate, string next, string eta, string best, bool header)
         {
-            var row = Ui.Row(_content, 0f);
+            var row = Ui.Row(_content, 10f);
             float size = header ? 14f : 16f;
             var c = header ? Muted : Color.white;
-            Cell(row, unit, 170f, size, header ? Muted : Accent, TextAlignmentOptions.Left);
-            Cell(row, value, 140f, size, c, TextAlignmentOptions.Left);
-            Cell(row, rate, 140f, size, c, TextAlignmentOptions.Left);
+            Cell(row, unit, 150f, size, header ? Muted : Accent, TextAlignmentOptions.Left);
+            Cell(row, value, 105f, size, c, TextAlignmentOptions.Left);
+            Cell(row, rate, 135f, size, c, TextAlignmentOptions.Left);
             var iconCell = Ui.NewChild("IconCell", row);
             iconCell.gameObject.AddComponent<LayoutElement>().preferredWidth = 34f;
             if (icon != null)
@@ -298,9 +308,9 @@ namespace WardensLogistics.Logistica
                 img.gameObject.AddComponent<Image>().sprite = icon;
                 img.GetComponent<Image>().preserveAspect = true;
             }
-            Cell(row, next, 330f, size, c, TextAlignmentOptions.Left);
-            Cell(row, eta, 110f, size, c, TextAlignmentOptions.Left);
-            Cell(row, best, 220f, size, header ? Muted : new Color(1f, 1f, 1f, 0.8f), TextAlignmentOptions.Left);
+            Cell(row, next, 290f, size, c, TextAlignmentOptions.Left);
+            Cell(row, eta, 95f, size, c, TextAlignmentOptions.Left);
+            Cell(row, best, 270f, size, header ? Muted : new Color(1f, 1f, 1f, 0.8f), TextAlignmentOptions.Left);
         }
 
         // ---------- aba Produção ----------

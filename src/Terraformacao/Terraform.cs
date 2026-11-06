@@ -49,7 +49,7 @@ namespace WardensLogistics.Terraformacao
             public bool Available;
             public List<UnitRow> Rows = new List<UnitRow>();
             public UnitRow Soonest;           // desbloqueio mais próximo no ritmo atual
-            public UnitRow Stalled;           // medida parada com desbloqueio pendente
+            public List<UnitRow> Stalled = new List<UnitRow>(); // medidas paradas com desbloqueio pendente e algo para construir
         }
 
         public static Report Analyze()
@@ -127,7 +127,7 @@ namespace WardensLogistics.Terraformacao
 
                 r.Rows.Add(row);
                 if (row.Eta >= 0 && (r.Soonest == null || row.Eta < r.Soonest.Eta)) r.Soonest = row;
-                if (row.NextValue >= 0 && row.PerSecond <= 0f && type != DataConfig.WorldUnitType.Terraformation && r.Stalled == null) r.Stalled = row;
+                if (row.NextValue >= 0 && row.PerSecond <= 0f && type != DataConfig.WorldUnitType.Terraformation && row.BestBuilder != null) r.Stalled.Add(row);
             }
             return r;
         }

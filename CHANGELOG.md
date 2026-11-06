@@ -1,5 +1,9 @@
 # Histórico de versões
 
+## 0.10.1
+- **Timelapse:** a foto usa o mesmo pós-processamento da câmera do jogo (cores iguais às da tela) e não mostra mais a mão e a ferramenta do jogador.
+- **Central Warden:** abas compactas à esquerda; tabela de terraformação com colunas reequilibradas (sem texto encavalado); no começo do jogo a sugestão lista tudo que dá a partida no planeta (ex.: Vegetubo, Aquecedor, Broca) em vez de só uma medida; o índice de terraformação mostra "soma das outras medidas".
+
 ## 0.10.0
 - **Progressão (nova, ligada por padrão):** a tecnologia Warden é redescoberta ao longo do jogo.
   - Desde o início: guardar (K), buscar (J), assistente de terraformação, timelapse.

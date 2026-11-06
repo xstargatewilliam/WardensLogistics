@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.10.0";
+        public const string Version = "0.10.1";
 
         internal static ManualLogSource Log;
 
