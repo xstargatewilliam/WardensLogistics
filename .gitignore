@@ -17,3 +17,4 @@ refs/*.dll
 
 # Caminho local do jogo (Windows)
 GamePath.props
+dist/
