@@ -45,7 +45,7 @@ namespace WardensLogistics.Armazem
             if (_countsFrame == Time.frameCount) return Counts;
             _countsFrame = Time.frameCount;
             Counts.Clear();
-            foreach (var c in ContainerIndex.Nearby())
+            foreach (var c in ContainerIndex.Nearby(Plugin.PullRadius))
             {
                 foreach (var wo in c.Inventory.GetInsideWorldObjects())
                 {
@@ -103,7 +103,7 @@ namespace WardensLogistics.Armazem
                 var keep = new List<Group>(groups.Count);
                 var plan = new Dictionary<Inventory, List<WorldObject>>();
                 var taken = new HashSet<WorldObject>();
-                var containers = ContainerIndex.Nearby();
+                var containers = ContainerIndex.Nearby(Plugin.PullRadius);
 
                 for (int i = 0; i < groups.Count; i++)
                 {

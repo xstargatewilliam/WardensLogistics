@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.5.0";
+        public const string Version = "0.5.1";
 
         internal static ManualLogSource Log;
 
@@ -28,7 +28,8 @@ namespace WardensLogistics
         internal static ConfigEntry<bool> DebugLog;
 
         // Núcleo
-        internal static ConfigEntry<float> Range;
+        internal static ConfigEntry<float> PullRange;
+        internal static ConfigEntry<float> StoreRangePercent;
         internal static ConfigEntry<float> RefreshSeconds;
         internal static ConfigEntry<bool> IncludeWorldContainers;
 
@@ -66,9 +67,12 @@ namespace WardensLogistics
             DebugLog = Config.Bind("1. General", "DebugLog", false,
                 "Escreve mensagens detalhadas no BepInEx/LogOutput.log.\nWrite detailed messages to BepInEx/LogOutput.log.");
 
-            Range = Config.Bind("2. Core", "Range", 40f,
-                "Raio em metros para encontrar baús próximos (vale para todos os módulos).\n" +
-                "Radius in meters used by every module to find nearby containers.");
+            PullRange = Config.Bind("2. Core", "PullRange", 200f,
+                "Raio em metros dos baús usados para construir e craftar.\n" +
+                "Radius in meters of the containers used to build and craft.");
+            StoreRangePercent = Config.Bind("2. Core", "StoreRangePercent", 50f,
+                "Raio para guardar (tecla K), em % do PullRange. 50 = metade.\n" +
+                "Radius for storing (K key), as a % of PullRange. 50 = half.");
             RefreshSeconds = Config.Bind("2. Core", "IndexRefreshSeconds", 3f,
                 "De quantos em quantos segundos, no máximo, a lista de baús é atualizada.\n" +
                 "How often (seconds) the shared container index rescans the map, at most.");
@@ -123,6 +127,12 @@ namespace WardensLogistics
             Logistica.XRayOverlay.Create();
             Log.LogInfo($"{Name} {Version} loaded.");
         }
+
+        /// <summary>Raio dos baús para construir e craftar.</summary>
+        internal static float PullRadius => UnityEngine.Mathf.Max(1f, PullRange.Value);
+
+        /// <summary>Raio dos baús para guardar: uma porcentagem do raio de construção.</summary>
+        internal static float StoreRadius => PullRadius * UnityEngine.Mathf.Clamp(StoreRangePercent.Value, 1f, 100f) / 100f;
 
         internal static void Debug(string message)
         {

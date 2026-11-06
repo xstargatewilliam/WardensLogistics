@@ -1,5 +1,8 @@
 # Histórico de versões
 
+## 0.5.1
+- **Núcleo:** dois raios. `PullRange` (padrão 200 m) para construir e craftar puxando dos baús; guardar (K) usa `StoreRangePercent` desse raio (padrão 50%, ou seja, 100 m). A opção `Range` deixou de existir.
+
 ## 0.5.0
 - **Raio-x da logística (novo módulo):** a tecla N abre um painel com drones (voando e nas estações), entregas por estado, baús com pedido/oferta e energia, e aponta a causa dos problemas: sem estação de drones, sem energia, item pedido que ninguém oferece, fornecedores vazios, entregas sem drone livre e baús de oferta cheios do que ninguém pede. Os baús envolvidos ganham marcadores coloridos no mundo. Disponível no jogo solo e para o anfitrião.
 

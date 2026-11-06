@@ -54,17 +54,17 @@ namespace WardensLogistics.Core
         public static void Invalidate() => _lastRefresh = float.NegativeInfinity;
 
         /// <summary>
-        /// Baús dentro do raio configurado, do mais perto para o mais longe.
+        /// Baús dentro do raio informado, do mais perto para o mais longe.
         /// A lista devolvida é reaproveitada: copie se for guardar.
         /// </summary>
-        public static List<ContainerEntry> Nearby()
+        public static List<ContainerEntry> Nearby(float radius)
         {
             NearbyBuffer.Clear();
             var pos = Game.PlayerPosition;
             if (pos == null) return NearbyBuffer;
 
             EnsureFresh();
-            float rangeSqr = Plugin.Range.Value * Plugin.Range.Value;
+            float rangeSqr = radius * radius;
             for (int i = 0; i < Entries.Count; i++)
             {
                 var e = Entries[i];
@@ -192,7 +192,7 @@ namespace WardensLogistics.Core
             var pos = Game.PlayerPosition;
             if (pos == null || InventoriesHandler.Instance == null) return;
             var backpack = Game.Backpack;
-            float radius = Plugin.Range.Value + 10f;
+            float radius = Plugin.StoreRadius + 10f;
 
             var sb = new StringBuilder();
             sb.AppendLine($"[Core] Diagnostics: inventories within {radius:0} m of the player:");

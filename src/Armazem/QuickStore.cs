@@ -32,13 +32,13 @@ namespace WardensLogistics.Armazem
         /// <summary>Guarda nos baús próximos (nenhuma janela aberta).</summary>
         public static void RunNearby()
         {
-            var containers = ContainerIndex.Nearby();
+            var containers = ContainerIndex.Nearby(Plugin.StoreRadius);
             if (containers.Count == 0)
             {
                 // Diz a que distância está o baú mais perto, para separar "fora do alcance" de "nenhum baú".
                 var all = ContainerIndex.All();
                 if (all.Count > 0)
-                    Game.Notify(Text.Get("store.out_of_range", Plugin.Range.Value.ToString("0"),
+                    Game.Notify(Text.Get("store.out_of_range", Plugin.StoreRadius.ToString("0"),
                         UnityEngine.Mathf.Sqrt(all[0].DistanceSqr).ToString("0")));
                 else
                 {

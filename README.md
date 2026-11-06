@@ -36,7 +36,8 @@ Diferenças em relação aos mods que inspiraram o projeto:
 Principais opções (todas com descrição em português e inglês no arquivo):
 
 - `Language`: `auto` segue o idioma do jogo; ou `portuguese`, `english`, `spanish`...
-- `Range`: raio dos baús próximos, em metros (padrão 40).
+- `PullRange`: raio dos baús usados para construir e craftar, em metros (padrão 200).
+- `StoreRangePercent`: raio para guardar com K, em % do `PullRange` (padrão 50 = 100 m).
 - `IncludeWorldContainers`: usar também as caixas que vêm com o mapa (padrão: não).
 - `Key` (Quick Store / Item Finder): teclas K e J.
 - `ExcludedItemIds`: itens que nunca são guardados (ex.: `OxygenCapsule1,WaterBottle1`).
