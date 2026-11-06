@@ -46,6 +46,9 @@ namespace WardensLogistics
             if (findPressed)
                 ItemFinder.KeyWithoutWindow();
 
+            if (Plugin.XRayEnabled.Value && Pressed(keyboard, Plugin.XRayKey.Value))
+                Logistica.XRayOverlay.Toggle();
+
             if (Pressed(keyboard, Plugin.PullToggleKey.Value))
                 PullFromContainers.Toggle();
         }

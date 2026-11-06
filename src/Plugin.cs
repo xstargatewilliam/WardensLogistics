@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.4.1";
+        public const string Version = "0.5.0";
 
         internal static ManualLogSource Log;
 
@@ -49,6 +49,10 @@ namespace WardensLogistics
         internal static ConfigEntry<Key> FinderKey;
         internal static ConfigEntry<float> FinderSeconds;
         internal static ConfigEntry<int> FinderMaxMarkers;
+
+        // Raio-x da logística
+        internal static ConfigEntry<bool> XRayEnabled;
+        internal static ConfigEntry<Key> XRayKey;
 
         private void Awake()
         {
@@ -106,10 +110,17 @@ namespace WardensLogistics
             FinderMaxMarkers = Config.Bind("5. Item Finder", "MaxMarkers", 15,
                 "Máximo de baús marcados (os mais próximos primeiro).\nMaximum containers marked (nearest first).");
 
+            XRayEnabled = Config.Bind("6. Logistics X-Ray", "Enabled", true,
+                "Painel com o estado da logística de drones e os problemas encontrados (solo ou anfitrião).\n" +
+                "Panel with the drone logistics status and the problems found (single player or host).");
+            XRayKey = Config.Bind("6. Logistics X-Ray", "Key", Key.N,
+                "Tecla que abre e fecha o Raio-x.\nKey that opens and closes the X-Ray.");
+
             Text.Init(Path.GetDirectoryName(Info.Location));
 
             new Harmony(Guid).PatchAll(typeof(Plugin).Assembly);
             Busca.FinderOverlay.Create();
+            Logistica.XRayOverlay.Create();
             Log.LogInfo($"{Name} {Version} loaded.");
         }
 

@@ -17,6 +17,7 @@ Os Wardens foram uma civilização avançada. Este mod traz essa tecnologia para
 | **Armazém** | Construir e craftar puxando ingredientes dos baús próximos. | automático |
 | **Busca** | Onde está meu item: com uma janela aberta, J sobre um item marca os baús que o têm. No menu de construção, J sobre a receita procura os ingredientes que faltam. | J |
 | **Busca** | Caixa de busca: sem janela aberta, J abre um campo para digitar o nome do item. | J |
+| **Raio-x da logística** | Painel com o estado dos drones e das entregas, que aponta a causa dos gargalos (sem estação, sem energia, pedido sem fornecedor, fornecedor vazio, baú de oferta encalhado) e marca os baús envolvidos. Solo ou anfitrião. | N |
 
 Diferenças em relação aos mods que inspiraram o projeto:
 - usa as transferências oficiais do jogo, que sincronizam em multiplayer;
@@ -70,6 +71,7 @@ src/
   Core/              índice de baús, textos/idiomas, acesso ao jogo, rastreamento
   Armazem/           guardar rápido, depositar, puxar dos baús
   Busca/             onde está meu item, caixa de busca, marcadores
+  Logistica/         raio-x da logística de drones
 ```
 
 ## Créditos
@@ -94,6 +96,6 @@ A definir.
 
 ## English summary
 
-**Wardens Logistics** turns your containers into one network. Press **K** to store backpack items into nearby containers that already hold them (or, with a container open, into that container). Build and craft straight from nearby containers. Press **J** over an item or recipe to mark which containers hold it, or with no window open to type an item name. Multiplayer-safe item transfers, a cached container index, one config file, and translatable texts (`lang/templates`).
+**Wardens Logistics** turns your containers into one network. Press **K** to store backpack items into nearby containers that already hold them (or, with a container open, into that container). Build and craft straight from nearby containers. Press **J** over an item or recipe to mark which containers hold it, or with no window open to type an item name. Press **N** for the Logistics X-Ray: drone and delivery status plus the root cause of bottlenecks, with problem containers marked in the world. Multiplayer-safe item transfers, a cached container index, one config file, and translatable texts (`lang/templates`).
 
 Requires BepInEx 5. Install to `BepInEx\plugins\WardensLogistics\`.

@@ -1,5 +1,8 @@
 # Histórico de versões
 
+## 0.5.0
+- **Raio-x da logística (novo módulo):** a tecla N abre um painel com drones (voando e nas estações), entregas por estado, baús com pedido/oferta e energia, e aponta a causa dos problemas: sem estação de drones, sem energia, item pedido que ninguém oferece, fornecedores vazios, entregas sem drone livre e baús de oferta cheios do que ninguém pede. Os baús envolvidos ganham marcadores coloridos no mundo. Disponível no jogo solo e para o anfitrião.
+
 ## 0.4.1
 - **Busca:** a lista de sugestões aparece logo abaixo da caixa de texto do jogo (antes cobria a caixa), em qualquer resolução.
 
