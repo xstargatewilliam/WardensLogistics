@@ -19,7 +19,7 @@ namespace WardensLogistics
     {
         public const string Guid = "wardenslogistics.theplanetcrafter";
         public const string Name = "Wardens Logistics";
-        public const string Version = "0.6.3";
+        public const string Version = "0.7.0";
 
         internal static ManualLogSource Log;
 
@@ -136,7 +136,8 @@ namespace WardensLogistics
                 "Painel com o estado da logística de drones e os problemas encontrados (solo ou anfitrião).\n" +
                 "Panel with the drone logistics status and the problems found (single player or host).");
             XRayKey = Config.Bind("6. Logistics X-Ray", "Key", Key.N,
-                "Tecla que abre e fecha o Raio-x.\nKey that opens and closes the X-Ray.");
+                "Tecla que abre e fecha o painel do Raio-x. Ctrl + esta tecla abre a janela detalhada.\n" +
+                "Key that opens and closes the X-Ray panel. Ctrl + this key opens the detailed window.");
 
             Text.Init(Path.GetDirectoryName(Info.Location));
             Logistica.XRayHud.SetIconFolder(Path.GetDirectoryName(Info.Location));

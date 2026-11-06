@@ -99,6 +99,7 @@ namespace WardensLogistics.Core
                     if (store != null) parts.Add(Key(store, "legend.store"));
                     if (find != null) parts.Add(Key(find, "legend.find"));
                     if (xray != null) parts.Add(Key(xray, "legend.xray"));
+                    if (xray != null) parts.Add(Key("Ctrl+" + xray, "legend.xray_detail"));
                     break;
                 case DataConfig.UiType.Container:
                     if (store != null && Plugin.DepositOpenEnabled.Value) parts.Add(Key(store, "legend.deposit"));

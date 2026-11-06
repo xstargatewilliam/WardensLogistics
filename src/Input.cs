@@ -29,6 +29,21 @@ namespace WardensLogistics
 
             bool findPressed = Plugin.FinderEnabled.Value && Pressed(keyboard, Plugin.FinderKey.Value);
 
+            bool ctrl = keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed;
+            bool xrayPressed = Plugin.XRayEnabled.Value && Pressed(keyboard, Plugin.XRayKey.Value);
+
+            // Janela detalhada do Raio-x: Ctrl+N abre e fecha (Esc também fecha, pelo jogo).
+            if (Logistica.XRayWindow.IsOpen)
+            {
+                if (xrayPressed) Logistica.XRayWindow.Close();
+                return;
+            }
+            if (xrayPressed && ctrl && !windows.GetHasUiOpen())
+            {
+                Logistica.XRayWindow.Open();
+                return;
+            }
+
             if (windows.GetHasUiOpen())
             {
                 if (findPressed && windows.GetOpenedUi() != DataConfig.UiType.TextInput && windows.GetOpenedUi() != DataConfig.UiType.Chat)
@@ -46,7 +61,7 @@ namespace WardensLogistics
             if (findPressed)
                 ItemFinder.KeyWithoutWindow();
 
-            if (Plugin.XRayEnabled.Value && Pressed(keyboard, Plugin.XRayKey.Value))
+            if (xrayPressed && !ctrl)
                 Logistica.XRayOverlay.Toggle();
 
             if (Pressed(keyboard, Plugin.PullToggleKey.Value))

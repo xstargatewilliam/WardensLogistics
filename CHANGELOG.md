@@ -1,5 +1,8 @@
 # Histórico de versões
 
+## 0.7.0
+- **Raio-x detalhado (Ctrl+N):** janela que se comporta como as do jogo (para o personagem, mostra o cursor, fecha com Esc), com visão geral explicada (drones, estações, entregas, energia), todos os problemas com "por quê", "como resolver" e os baús envolvidos (nome e distância), e uma tabela por item (pedem, oferecem, estoque, em entrega, situação). Rolagem pela roda do mouse; atualiza a cada 3 segundos.
+
 ## 0.6.3
 - **Atalhos sempre visíveis:** uma linha discreta logo acima da versão do jogo, no canto inferior direito, com a mesma fonte; o conteúdo muda conforme a janela aberta. Substitui a barra de atalhos e o lembrete ao carregar.
 - **Raio-x:** o fundo do painel volta a ser escuro (a borda passou a ser desenhada como quatro linhas finas, sem vazar branco pelo fundo translúcido).

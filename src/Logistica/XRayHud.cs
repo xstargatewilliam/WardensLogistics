@@ -110,6 +110,9 @@ namespace WardensLogistics.Logistica
             Ui.Label(chip, value, 20f, color);
         }
 
+        /// <summary>Ícone por nome (PNG da pasta icons/ ou reserva do jogo), para a janela detalhada.</summary>
+        public static Sprite Icon(string name, System.Func<Sprite> fallback) => IconOrGame(name, fallback);
+
         /// <summary>PNG da pasta icons/ se existir; senão o ícone de reserva do jogo.</summary>
         private static Sprite IconOrGame(string name, System.Func<Sprite> fallback)
         {

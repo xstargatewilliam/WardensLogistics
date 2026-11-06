@@ -42,6 +42,7 @@ namespace WardensLogistics.Logistica
 
         private void Update()
         {
+            XRayWindow.Tick();
             bool shouldShow = _visible && !Game.IsUiOpen;
             if (!shouldShow)
             {
